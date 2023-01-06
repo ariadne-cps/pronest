@@ -26,7 +26,7 @@ jobs:
 
     - name: Configure CMake
       working-directory: ${{runner.workspace}}/build
-      run: cmake ${{runner.workspace}}/conclog -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=g++-10 -G "Ninja" -DCOVERAGE=ON
+      run: cmake ${{runner.workspace}}/pronest -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=g++-10 -G "Ninja" -DCOVERAGE=ON
 
     - name: Build
       working-directory: ${{runner.workspace}}/build
