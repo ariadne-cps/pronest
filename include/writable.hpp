@@ -1,0 +1,63 @@
+/***************************************************************************
+ *            writable.hpp
+ *
+ *  Copyright  2013-20  Pieter Collins
+ *
+ ****************************************************************************/
+
+/*
+ * This file is part of ProNest, under the MIT license.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+/*! \file writable.hpp
+ *  \brief
+ */
+
+#ifndef PRONEST_WRITABLE_HPP
+#define PRONEST_WRITABLE_HPP
+
+#include "declarations.hpp"
+#include "metaprogramming.hpp"
+
+namespace ProNest {
+
+class WritableInterface {
+  public:
+    virtual ~WritableInterface() = default;
+    friend OutputStream& operator<<(OutputStream& os, const WritableInterface& w);
+  public:
+    inline OutputStream& write(OutputStream& os) const { return this->_write(os); }
+  protected:
+  public:
+    virtual OutputStream& _write(OutputStream&) const = 0;
+};
+inline OutputStream& operator<<(OutputStream& os, const WritableInterface& w) { w._write(os); return os; }
+
+template<class T, class = decltype(declval<T>()._write(declval<OutputStream>()))> True has_write(int);
+template<class T> False has_write(...);
+template<class T, class = Fallback> struct IsWritable : decltype(has_write<T>(1)) { };
+
+template<class T> requires IsWritable<T>::value OutputStream& operator<<(OutputStream& os, const T& t) {
+    return t._write(os);
+}
+
+} // namespace ProNest
+
+#endif // PRONEST_WRITABLE_HPP
