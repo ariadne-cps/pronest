@@ -49,6 +49,8 @@ std::ostream& operator<<(std::ostream& os, const LevelOptions level) {
 
 class TestConfigurable;
 
+namespace ProNest {
+
 template<> struct Configuration<TestConfigurable> : public SearchableConfiguration {
   public:
     Configuration() { add_property("use_something",BooleanConfigurationProperty(true)); }
@@ -56,6 +58,9 @@ template<> struct Configuration<TestConfigurable> : public SearchableConfigurati
     void set_both_use_something() { dynamic_cast<BooleanConfigurationProperty&>(*properties().get("use_something")).set_both(); }
     void set_use_something(bool const& value) { dynamic_cast<BooleanConfigurationProperty&>(*properties().get("use_something")).set(value); }
 };
+
+}
+
 class TestConfigurableInterface : public WritableInterface {
 public:
     virtual TestConfigurableInterface* clone() const = 0;
