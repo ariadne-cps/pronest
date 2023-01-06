@@ -43,7 +43,7 @@ namespace ProNest {
 
 using std::min, std::max;
 
-bool possibly(bool value) { return value; }
+inline bool possibly(bool value) { return value; }
 
 template<class T> ConfigurationPropertyBase<T>::ConfigurationPropertyBase(bool const& is_specified) : _is_specified(is_specified) { }
 
