@@ -307,7 +307,7 @@ template<class T> SizeType HandleListConfigurationProperty<T>::cardinality() con
 
 template<class T> List<int> HandleListConfigurationProperty<T>::local_integer_values() const {
     List<int> result;
-    for (SizeType i=0; i<_values.size(); ++i) result.push_back(i);
+    for (SizeType i=0; i<_values.size(); ++i) result.push_back(static_cast<int>(i));
     return result;
 }
 
