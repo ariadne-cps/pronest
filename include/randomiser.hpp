@@ -59,7 +59,7 @@ template<> struct Randomiser<SizeType> {
 } // namespace ProNest
 
 inline bool _init_randomiser() {
-    srand(time(nullptr));
+    srand(static_cast<unsigned int>(time(nullptr)));
     return true;
 }
 

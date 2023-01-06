@@ -171,7 +171,7 @@ List<Nat> ConfigurationSearchPoint::shift_breadths() const {
             auto const& param = parameter(b.first);
             auto const& values = param.values();
             auto size = values.size();
-            if (not param.is_metric()) _CACHED_SHIFT_BREADTHS.push_back(size-1); // all except the current
+            if (not param.is_metric()) _CACHED_SHIFT_BREADTHS.push_back(static_cast<Nat>(size-1)); // all except the current
             else if (b.second == values[size-1]) _CACHED_SHIFT_BREADTHS.push_back(1); // can only move down
             else if (b.second == values[0]) _CACHED_SHIFT_BREADTHS.push_back(1); // can only move up
             else _CACHED_SHIFT_BREADTHS.push_back(2);; // can move either up or down
