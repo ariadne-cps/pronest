@@ -52,7 +52,7 @@ template<class I> class Handle {
     I* pointer() { make_unique(); return _ptr.operator->(); }
   protected:
     template<class II> static void _make_unique(SharedPointer<II>& ptr) {
-        if(!ptr.unique()) { ptr=SharedPointer<I>(ptr->clone()); } }
+        ptr=SharedPointer<I>(ptr->clone()); }
     template<class II> static void _make_unique(SharedPointer<const II>& ptr) { }
     void make_unique() { _make_unique(_ptr); }
 };
