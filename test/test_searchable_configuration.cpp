@@ -79,6 +79,8 @@ using TestConfigurableConfigurationProperty = InterfaceListConfigurationProperty
 using Log10Converter = Log10SearchSpaceConverter<double>;
 using Log2Converter = Log2SearchSpaceConverter<double>;
 
+namespace ProNest {
+
 template<> struct Configuration<A> : public SearchableConfiguration {
   public:
     Configuration() {
@@ -109,6 +111,8 @@ template<> struct Configuration<A> : public SearchableConfiguration {
     void set_test_configurable(TestConfigurableInterface const& test_configurable) { at<TestConfigurableConfigurationProperty>("test_configurable").set(test_configurable); }
     void set_test_configurable(SharedPointer<TestConfigurableInterface> const& test_configurable) { at<TestConfigurableConfigurationProperty>("test_configurable").set(test_configurable); }
 };
+
+}
 
 class A : public Configurable<A>, public WritableInterface {
   public:
