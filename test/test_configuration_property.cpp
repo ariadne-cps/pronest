@@ -28,6 +28,7 @@
 
 #include "searchable_configuration.hpp"
 #include "configuration_property.tpl.hpp"
+#include "handle.hpp"
 #include "test.hpp"
 
 using namespace ProNest;
@@ -50,6 +51,7 @@ class A : public TestInterface {
   public:
     OutputStream& _write(OutputStream& os) const override { return os << "A"; }
     TestInterface* clone() const override { return new A(*this); }
+
 };
 class B : public TestInterface {
 public:
@@ -57,27 +59,33 @@ public:
     TestInterface* clone() const override { return new B(*this); }
 };
 
-using ExactDoubleConfigurationProperty = RangeConfigurationProperty<ExactDouble>;
+class TestHandle : public Handle<TestInterface> {
+  public:
+    using Handle<TestInterface>::Handle;
+    TestInterface* clone() const { return _ptr->clone(); }
+};
+
+using DoubleConfigurationProperty = RangeConfigurationProperty<double>;
 using LevelOptionsConfigurationProperty = EnumConfigurationProperty<LevelOptions>;
-using SweeperConfigurationProperty = HandleListConfigurationProperty<Sweeper<FloatDP>>;
+using TestHandleListConfigurationProperty = HandleListConfigurationProperty<TestHandle>;
 using TestInterfaceListConfigurationProperty = InterfaceListConfigurationProperty<TestInterface>;
-using Log10Converter = Log10SearchSpaceConverter<ExactDouble>;
-using Log2Converter = Log2SearchSpaceConverter<ExactDouble>;
+using Log10Converter = Log10SearchSpaceConverter<double>;
+using Log2Converter = Log2SearchSpaceConverter<double>;
 
 class TestConfiguration {
   public:
 
     void test_converters() {
-        Log10SearchSpaceConverter<ExactDouble> log10_x;
-        PRONEST_TEST_EQUALS(log10_x.to_int(cast_exact(0.001)),-3);
-        PRONEST_TEST_PRINT(log10_x.from_int(-3).get_d());
-        Log2SearchSpaceConverter<ExactDouble> log2_x;
-        PRONEST_TEST_EQUALS(log2_x.to_int(0.03125_x),-5);
-        PRONEST_TEST_PRINT(log2_x.from_int(-5).get_d());
-        LinearSearchSpaceConverter<ExactDouble> lin_x;
-        PRONEST_TEST_EQUALS(lin_x.to_int(cast_exact(3.49)),3);
-        PRONEST_TEST_EQUALS(lin_x.to_int(3.5_x),4);
-        PRONEST_TEST_EQUALS(lin_x.from_int(4).get_d(),4);
+        Log10SearchSpaceConverter<double> log10_x;
+        PRONEST_TEST_EQUALS(log10_x.to_int(0.001),-3);
+        PRONEST_TEST_PRINT(log10_x.from_int(-3));
+        Log2SearchSpaceConverter<double> log2_x;
+        PRONEST_TEST_EQUALS(log2_x.to_int(0.03125),-5);
+        PRONEST_TEST_PRINT(log2_x.from_int(-5));
+        LinearSearchSpaceConverter<double> lin_x;
+        PRONEST_TEST_EQUALS(lin_x.to_int(3.49),3);
+        PRONEST_TEST_EQUALS(lin_x.to_int(3.5),4);
+        PRONEST_TEST_EQUALS(lin_x.from_int(4),4);
         LinearSearchSpaceConverter<int> lin_int;
         PRONEST_TEST_EQUALS(lin_int.to_int(-2),-2);
         PRONEST_TEST_EQUALS(lin_int.from_int(4),4);
@@ -95,7 +103,6 @@ class TestConfiguration {
         PRONEST_TEST_ASSERT(p2.is_specified());
         PRONEST_TEST_ASSERT(p2.is_single());
         PRONEST_TEST_EQUALS(p2.cardinality(),1);
-        PRONEST_TEST_PRINT(p2.get());
     }
 
     void test_boolean_configuration_property_modification() {
@@ -141,59 +148,58 @@ class TestConfiguration {
 
     void test_range_configuration_property_construction() {
         Log10Converter converter;
-        ExactDoubleConfigurationProperty p1(converter);
+        DoubleConfigurationProperty p1(converter);
         PRONEST_TEST_ASSERT(p1.is_metric(ConfigurationPropertyPath()));
         PRONEST_TEST_ASSERT(not p1.is_specified());
         PRONEST_TEST_ASSERT(not p1.is_single());
         PRONEST_TEST_EQUALS(p1.cardinality(),0);
-        ExactDoubleConfigurationProperty p2(cast_exact(1e-2),converter);
+        DoubleConfigurationProperty p2(1e-2,converter);
         PRONEST_TEST_ASSERT(p2.is_specified());
         PRONEST_TEST_ASSERT(p2.is_single());
-        PRONEST_TEST_PRINT(p2.get());
         PRONEST_TEST_EQUALS(p2.cardinality(),1);
-        ExactDoubleConfigurationProperty p3(cast_exact(1e-10),cast_exact(1e-8),converter);
+        DoubleConfigurationProperty p3(1e-10,1e-8,converter);
         PRONEST_TEST_ASSERT(p3.is_specified());
         PRONEST_TEST_ASSERT(not p3.is_single());
         PRONEST_TEST_EQUALS(p3.cardinality(),3);
-        PRONEST_TEST_FAIL(ExactDoubleConfigurationProperty(cast_exact(1e-8),cast_exact(1e-9),converter));
+        PRONEST_TEST_FAIL(DoubleConfigurationProperty(1e-8,1e-9,converter));
     }
 
     void test_range_configuration_property_modification() {
         Log10Converter converter;
-        ExactDoubleConfigurationProperty p(converter);
+        DoubleConfigurationProperty p(converter);
         PRONEST_TEST_EQUALS(p.cardinality(),0);
         auto iv = p.integer_values();
         PRONEST_TEST_EQUALS(iv.size(),1);
         PRONEST_TEST_EQUALS(iv.begin()->second.size(),0);
-        p.set(cast_exact(1e-2));
+        p.set(1e-2);
         PRONEST_TEST_ASSERT(p.is_specified());
         PRONEST_TEST_ASSERT(p.is_single());
         PRONEST_TEST_EQUALS(p.cardinality(),1);
         PRONEST_TEST_EQUALS(p.integer_values().begin()->second.size(),1);
-        p.set(cast_exact(1e-10),cast_exact(1e-8));
+        p.set(1e-10,1e-8);
         PRONEST_TEST_ASSERT(p.is_specified());
         PRONEST_TEST_ASSERT(not p.is_single());
         PRONEST_TEST_EQUALS(p.cardinality(),3);
         PRONEST_TEST_EQUALS(p.integer_values().begin()->second.size(),3);
-        PRONEST_TEST_FAIL(p.set(cast_exact(1e-8),cast_exact(1e-9)));
+        PRONEST_TEST_FAIL(p.set(1e-8,1e-9));
     }
 
     void test_range_configuration_property_set_single() {
         Log10Converter converter;
-        ExactDoubleConfigurationProperty p(cast_exact(0.001),cast_exact(0.1),converter);
+        DoubleConfigurationProperty p(0.001,0.1,converter);
         p.set_single(ConfigurationPropertyPath(),-3);
         PRONEST_TEST_ASSERT(p.is_single());
         PRONEST_TEST_PRINT(p);
-        p.set(cast_exact(0.001),cast_exact(0.1));
+        p.set(0.001,0.1);
         p.set_single(ConfigurationPropertyPath(),-1);
         PRONEST_TEST_ASSERT(p.is_single());
         PRONEST_TEST_PRINT(p);
-        p.set(cast_exact(0.001),cast_exact(0.1));
+        p.set(0.001,0.1);
         p.set_single(ConfigurationPropertyPath(),-2);
         PRONEST_TEST_ASSERT(p.is_single());
-        PRONEST_TEST_PRINT(p.get().get_d());
+        PRONEST_TEST_PRINT(p.get());
         PRONEST_TEST_FAIL(p.set_single(ConfigurationPropertyPath(),-1));
-        p.set(cast_exact(0.001),cast_exact(0.1));
+        p.set(0.001,0.1);
         PRONEST_TEST_FAIL(p.set_single(ConfigurationPropertyPath(),-4));
         PRONEST_TEST_FAIL(p.set_single(ConfigurationPropertyPath(),0));
     }
@@ -216,7 +222,7 @@ class TestConfiguration {
         PRONEST_TEST_ASSERT(not p3.is_single());
         PRONEST_TEST_EQUALS(p3.cardinality(),2);
         PRONEST_TEST_FAIL(new EnumConfigurationProperty<int>());
-        PRONEST_TEST_FAIL(new EnumConfigurationProperty<Integer>());
+        PRONEST_TEST_FAIL(new EnumConfigurationProperty<String>());
     }
 
     void test_enum_configuration_property_modification() {
@@ -254,42 +260,41 @@ class TestConfiguration {
     }
 
     void test_list_configuration_property_construction() {
-        SweeperConfigurationProperty p1;
+        TestHandleListConfigurationProperty p1;
         PRONEST_TEST_ASSERT(not p1.is_metric(ConfigurationPropertyPath()));
         PRONEST_TEST_EQUALS(p1.cardinality(),0);
         PRONEST_TEST_ASSERT(not p1.is_specified());
-        ThresholdSweeper<FloatDP> sweeper(DoublePrecision(),1e-6);
-        SweeperConfigurationProperty p2(sweeper);
+        A a;
+        TestHandleListConfigurationProperty p2(a);
         PRONEST_TEST_ASSERT(p2.is_specified());
         PRONEST_TEST_ASSERT(p2.is_single());
         PRONEST_TEST_EQUALS(p2.cardinality(),1);
-        PRONEST_TEST_PRINT(p2.get());
-        List<Sweeper<FloatDP>> sweepers;
-        PRONEST_TEST_FAIL(new SweeperConfigurationProperty(sweepers));
-        sweepers.append(ThresholdSweeper<FloatDP>(DoublePrecision(),1e-6));
-        sweepers.append(GradedSweeper<FloatDP>(DoublePrecision(),Order(6)));
-        SweeperConfigurationProperty p3(sweepers);
+        List<TestHandle> handles;
+        PRONEST_TEST_FAIL(new TestHandleListConfigurationProperty(handles));
+        handles.push_back(A());
+        handles.push_back(B());
+        TestHandleListConfigurationProperty p3(handles);
         PRONEST_TEST_ASSERT(p3.is_specified());
         PRONEST_TEST_ASSERT(not p3.is_single());
         PRONEST_TEST_EQUALS(p3.cardinality(),2);
     }
 
     void test_list_configuration_property_modification() {
-        SweeperConfigurationProperty p;
+        TestHandleListConfigurationProperty p;
         PRONEST_TEST_EQUALS(p.cardinality(),0);
         auto iv = p.integer_values();
         PRONEST_TEST_EQUALS(iv.size(),1);
         PRONEST_TEST_EQUALS(iv.begin()->second.size(),0);
-        p.set(ThresholdSweeper<FloatDP>(DoublePrecision(),1e-6));
+        p.set(A());
         PRONEST_TEST_ASSERT(p.is_specified());
         PRONEST_TEST_ASSERT(p.is_single());
         PRONEST_TEST_EQUALS(p.cardinality(),1);
         PRONEST_TEST_EQUALS(p.integer_values().begin()->second.size(),1);
-        List<Sweeper<FloatDP>> sweepers;
-        PRONEST_TEST_FAIL(p.set(sweepers));
-        sweepers.append(ThresholdSweeper<FloatDP>(DoublePrecision(),1e-6));
-        sweepers.append(GradedSweeper<FloatDP>(DoublePrecision(),Order(6)));
-        p.set(sweepers);
+        List<TestHandle> handles;
+        PRONEST_TEST_FAIL(p.set(handles));
+        handles.push_back(A());
+        handles.push_back(B());
+        p.set(handles);
         PRONEST_TEST_ASSERT(p.is_specified());
         PRONEST_TEST_ASSERT(not p.is_single());
         PRONEST_TEST_EQUALS(p.cardinality(),2);
@@ -297,19 +302,19 @@ class TestConfiguration {
     }
 
     void test_list_configuration_property_set_single() {
-        List<Sweeper<FloatDP>> sweepers;
-        sweepers.append(ThresholdSweeper<FloatDP>(DoublePrecision(),1e-6));
-        sweepers.append(GradedSweeper<FloatDP>(DoublePrecision(),Order(6)));
-        SweeperConfigurationProperty p(sweepers);
+        List<TestHandle> handles;
+        handles.push_back(A());
+        handles.push_back(B());
+        TestHandleListConfigurationProperty p(handles);
         p.set_single(ConfigurationPropertyPath(),0);
         PRONEST_TEST_ASSERT(p.is_single());
         PRONEST_TEST_PRINT(p);
-        p.set(sweepers);
+        p.set(handles);
         p.set_single(ConfigurationPropertyPath(),1);
         PRONEST_TEST_ASSERT(p.is_single());
         PRONEST_TEST_PRINT(p);
         PRONEST_TEST_FAIL(p.set_single(ConfigurationPropertyPath(),0));
-        p.set(sweepers);
+        p.set(handles);
         PRONEST_TEST_FAIL(p.set_single(ConfigurationPropertyPath(),2));
         PRONEST_TEST_FAIL(p.set_single(ConfigurationPropertyPath(),-1));
     }
@@ -324,11 +329,10 @@ class TestConfiguration {
         PRONEST_TEST_ASSERT(p2.is_specified());
         PRONEST_TEST_ASSERT(p2.is_single());
         PRONEST_TEST_EQUALS(p2.cardinality(),1);
-        PRONEST_TEST_PRINT(p2.get());
         List<SharedPointer<TestInterface>> tests;
         PRONEST_TEST_FAIL(new TestInterfaceListConfigurationProperty(tests));
-        tests.append(SharedPointer<TestInterface>(new A()));
-        tests.append(SharedPointer<TestInterface>(new B()));
+        tests.push_back(SharedPointer<TestInterface>(new A()));
+        tests.push_back(SharedPointer<TestInterface>(new B()));
         TestInterfaceListConfigurationProperty p3(tests);
         PRONEST_TEST_ASSERT(p3.is_specified());
         PRONEST_TEST_ASSERT(not p3.is_single());
@@ -348,8 +352,8 @@ class TestConfiguration {
         PRONEST_TEST_EQUALS(p.integer_values().begin()->second.size(),1);
         List<SharedPointer<TestInterface>> tests;
         PRONEST_TEST_FAIL(p.set(tests));
-        tests.append(SharedPointer<TestInterface>(new A()));
-        tests.append(SharedPointer<TestInterface>(new B()));
+        tests.push_back(SharedPointer<TestInterface>(new A()));
+        tests.push_back(SharedPointer<TestInterface>(new B()));
         p.set(tests);
         PRONEST_TEST_ASSERT(p.is_specified());
         PRONEST_TEST_ASSERT(not p.is_single());
@@ -359,8 +363,8 @@ class TestConfiguration {
 
     void test_interface_configuration_property_set_single() {
         List<SharedPointer<TestInterface>> tests;
-        tests.append(SharedPointer<TestInterface>(new A()));
-        tests.append(SharedPointer<TestInterface>(new B()));
+        tests.push_back(SharedPointer<TestInterface>(new A()));
+        tests.push_back(SharedPointer<TestInterface>(new B()));
         TestInterfaceListConfigurationProperty p(tests);
         p.set_single(ConfigurationPropertyPath(),0);
         PRONEST_TEST_ASSERT(p.is_single());

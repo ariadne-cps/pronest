@@ -36,6 +36,7 @@
 #include <cstring>
 #include <iostream>
 #include <exception>
+#include "macros.hpp"
 
 int PRONEST_TEST_FAILURES = 0;
 int PRONEST_TEST_SKIPPED = 0;

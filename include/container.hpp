@@ -96,6 +96,9 @@ template<class K, class T> OutputStream& operator<<(OutputStream& os, const std:
 
 template<class T> class Set : public std::set<T> {
   public:
+    Set() : std::set<T>() { }
+    Set(const InitializerList<T>& s) : std::set<T>(s.begin(),s.end()) { }
+    Set(const List<T>& s) : std::set<T>(s.begin(),s.end()) { }
     bool contains(const T& t) const {
         return this->find(t)!=this->end(); }
     Set<T>& adjoin(const std::set<T>& s) {

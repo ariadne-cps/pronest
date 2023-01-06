@@ -73,18 +73,18 @@ private:
     String _value;
 };
 
-using ExactDoubleConfigurationProperty = RangeConfigurationProperty<ExactDouble>;
+using DoubleConfigurationProperty = RangeConfigurationProperty<double>;
 using LevelOptionsConfigurationProperty = EnumConfigurationProperty<LevelOptions>;
 using TestConfigurableConfigurationProperty = InterfaceListConfigurationProperty<TestConfigurableInterface>;
-using Log10Converter = Log10SearchSpaceConverter<ExactDouble>;
-using Log2Converter = Log2SearchSpaceConverter<ExactDouble>;
+using Log10Converter = Log10SearchSpaceConverter<double>;
+using Log2Converter = Log2SearchSpaceConverter<double>;
 
 template<> struct Configuration<A> : public SearchableConfiguration {
   public:
     Configuration() {
         add_property("use_reconditioning",BooleanConfigurationProperty(false));
-        add_property("maximum_step_size",ExactDoubleConfigurationProperty(inf,Log2Converter()));
-        add_property("sweep_threshold",ExactDoubleConfigurationProperty(ExactDouble::infinity(),Log2Converter()));
+        add_property("maximum_step_size",DoubleConfigurationProperty(std::numeric_limits<double>::infinity(),Log2Converter()));
+        add_property("sweep_threshold",DoubleConfigurationProperty(std::numeric_limits<double>::infinity(),Log2Converter()));
         add_property("level",LevelOptionsConfigurationProperty(LevelOptions::LOW));
         add_property("test_configurable",TestConfigurableConfigurationProperty(TestConfigurable(Configuration<TestConfigurable>())));
     }
@@ -93,13 +93,13 @@ template<> struct Configuration<A> : public SearchableConfiguration {
     void set_both_use_reconditioning() { at<BooleanConfigurationProperty>("use_reconditioning").set_both(); }
     void set_use_reconditioning(bool const& value) { at<BooleanConfigurationProperty>("use_reconditioning").set(value); }
 
-    ExactDouble const& maximum_step_size() const { return at<ExactDoubleConfigurationProperty>("maximum_step_size").get(); }
-    void set_maximum_step_size(ExactDouble const& value) { at<ExactDoubleConfigurationProperty>("maximum_step_size").set(value); }
-    void set_maximum_step_size(ExactDouble const& lower, ExactDouble const& upper) { at<ExactDoubleConfigurationProperty>("maximum_step_size").set(lower,upper); }
+    double const& maximum_step_size() const { return at<DoubleConfigurationProperty>("maximum_step_size").get(); }
+    void set_maximum_step_size(double const& value) { at<DoubleConfigurationProperty>("maximum_step_size").set(value); }
+    void set_maximum_step_size(double const& lower, double const& upper) { at<DoubleConfigurationProperty>("maximum_step_size").set(lower,upper); }
 
-    ExactDouble const& sweep_threshold() const { return at<ExactDoubleConfigurationProperty>("sweep_threshold").get(); }
-    void set_sweep_threshold(ExactDouble const& value) { at<ExactDoubleConfigurationProperty>("sweep_threshold").set(value); }
-    void set_sweep_threshold(ExactDouble const& lower, ExactDouble const& upper) { at<ExactDoubleConfigurationProperty>("sweep_threshold").set(lower,upper); }
+    double const& sweep_threshold() const { return at<DoubleConfigurationProperty>("sweep_threshold").get(); }
+    void set_sweep_threshold(double const& value) { at<DoubleConfigurationProperty>("sweep_threshold").set(value); }
+    void set_sweep_threshold(double const& lower, double const& upper) { at<DoubleConfigurationProperty>("sweep_threshold").set(lower,upper); }
 
     LevelOptions const& level() const { return at<LevelOptionsConfigurationProperty>("level").get(); }
     void set_level(LevelOptions const& level) { at<LevelOptionsConfigurationProperty>("level").set(level); }
@@ -167,7 +167,7 @@ class TestConfiguration {
         PRONEST_TEST_ASSERT(b.is_singleton());
         PRONEST_TEST_EQUALS(b.use_reconditioning(),use_reconditioning);
 
-        a.set_maximum_step_size(cast_exact(1e-3),cast_exact(1e-1));
+        a.set_maximum_step_size(1e-3,1e-1);
         auto search_space2 = a.search_space();
         PRONEST_TEST_PRINT(search_space2);
         point = search_space2.initial_point();

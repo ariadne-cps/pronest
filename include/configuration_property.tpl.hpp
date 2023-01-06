@@ -43,6 +43,8 @@ namespace ProNest {
 
 using std::min, std::max;
 
+bool possibly(bool value) { return value; }
+
 template<class T> ConfigurationPropertyBase<T>::ConfigurationPropertyBase(bool const& is_specified) : _is_specified(is_specified) { }
 
 template<class T> void ConfigurationPropertyBase<T>::set_specified() {
@@ -163,8 +165,8 @@ template<class T> void RangeConfigurationProperty<T>::set(T const& value) {
 template<class T> List<SharedPointer<T>> RangeConfigurationProperty<T>::values() const {
     List<SharedPointer<T>> result;
     if (this->is_specified()) {
-        result.append(std::make_shared<T>(_lower));
-        if (not is_single()) result.append(std::make_shared<T>(_upper));
+        result.push_back(std::make_shared<T>(_lower));
+        if (not is_single()) result.push_back(std::make_shared<T>(_upper));
     }
     return result;
 }
