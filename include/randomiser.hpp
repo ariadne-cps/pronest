@@ -45,7 +45,7 @@ template<class T> struct Randomiser;
 template<> struct Randomiser<double> {
     //! \get Return a value between 0 and \a value
     static double get(double min, double max) {
-        return ((max_d-min_d)*rand()/RAND_MAX + min_d);
+        return ((max-min)*rand()/RAND_MAX + min);
     }
 };
 

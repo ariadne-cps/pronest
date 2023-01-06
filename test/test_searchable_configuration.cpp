@@ -52,9 +52,9 @@ class TestConfigurable;
 template<> struct Configuration<TestConfigurable> : public SearchableConfiguration {
   public:
     Configuration() { add_property("use_something",BooleanConfigurationProperty(true)); }
-    Bool const& use_use_something() const { return dynamic_cast<BooleanConfigurationProperty const&>(*properties().get("use_something")).get(); }
+    bool const& use_use_something() const { return dynamic_cast<BooleanConfigurationProperty const&>(*properties().get("use_something")).get(); }
     void set_both_use_something() { dynamic_cast<BooleanConfigurationProperty&>(*properties().get("use_something")).set_both(); }
-    void set_use_something(Bool const& value) { dynamic_cast<BooleanConfigurationProperty&>(*properties().get("use_something")).set(value); }
+    void set_use_something(bool const& value) { dynamic_cast<BooleanConfigurationProperty&>(*properties().get("use_something")).set(value); }
 };
 class TestConfigurableInterface : public WritableInterface {
 public:
@@ -89,9 +89,9 @@ template<> struct Configuration<A> : public SearchableConfiguration {
         add_property("test_configurable",TestConfigurableConfigurationProperty(TestConfigurable(Configuration<TestConfigurable>())));
     }
 
-    Bool const& use_reconditioning() const { return at<BooleanConfigurationProperty>("use_reconditioning").get(); }
+    bool const& use_reconditioning() const { return at<BooleanConfigurationProperty>("use_reconditioning").get(); }
     void set_both_use_reconditioning() { at<BooleanConfigurationProperty>("use_reconditioning").set_both(); }
-    void set_use_reconditioning(Bool const& value) { at<BooleanConfigurationProperty>("use_reconditioning").set(value); }
+    void set_use_reconditioning(bool const& value) { at<BooleanConfigurationProperty>("use_reconditioning").set(value); }
 
     ExactDouble const& maximum_step_size() const { return at<ExactDoubleConfigurationProperty>("maximum_step_size").get(); }
     void set_maximum_step_size(ExactDouble const& value) { at<ExactDoubleConfigurationProperty>("maximum_step_size").set(value); }
@@ -160,7 +160,7 @@ class TestConfiguration {
         PRONEST_TEST_PRINT(search_space);
         auto point = search_space.initial_point();
         PRONEST_TEST_PRINT(point);
-        Bool use_reconditioning = (point.coordinates()[0] == 1 ? true : false);
+        bool use_reconditioning = (point.coordinates()[0] == 1 ? true : false);
         PRONEST_TEST_PRINT(use_reconditioning);
         auto b = make_singleton(a,point);
         PRONEST_TEST_ASSERT(not a.is_singleton());

@@ -38,7 +38,7 @@ BooleanConfigurationProperty::BooleanConfigurationProperty()
     : ConfigurationPropertyBase(false), _is_single(false)
 { }
 
-BooleanConfigurationProperty::BooleanConfigurationProperty(Bool const& value)
+BooleanConfigurationProperty::BooleanConfigurationProperty(bool const& value)
     : ConfigurationPropertyBase(true), _is_single(true), _value(value)
 { }
 
@@ -47,22 +47,22 @@ ConfigurationPropertyInterface* BooleanConfigurationProperty::at(ConfigurationPr
     return this;
 }
 
-Bool const& BooleanConfigurationProperty::get() const {
+bool const& BooleanConfigurationProperty::get() const {
     PRONEST_PRECONDITION(this->is_specified());
     PRONEST_ASSERT_MSG(this->is_single(),"The property should have a single value when actually used. Are you accessing it outside the related task?");
     return _value;
 }
 
-Bool BooleanConfigurationProperty::is_single() const {
+bool BooleanConfigurationProperty::is_single() const {
     return _is_single;
 }
 
-Bool BooleanConfigurationProperty::is_metric(ConfigurationPropertyPath const& path) const {
+bool BooleanConfigurationProperty::is_metric(ConfigurationPropertyPath const& path) const {
     PRONEST_PRECONDITION(path.is_root());
     return false;
 }
 
-Bool BooleanConfigurationProperty::is_configurable() const {
+bool BooleanConfigurationProperty::is_configurable() const {
     return false;
 }
 
@@ -101,19 +101,19 @@ void BooleanConfigurationProperty::set_both() {
     _is_single = false;
 }
 
-void BooleanConfigurationProperty::set(Bool const& value) {
+void BooleanConfigurationProperty::set(bool const& value) {
     set_specified();
     _is_single = true;
     _value=value;
 }
 
-List<SharedPointer<Bool>> BooleanConfigurationProperty::values() const {
-    List<SharedPointer<Bool>> result;
+List<SharedPointer<bool>> BooleanConfigurationProperty::values() const {
+    List<SharedPointer<bool>> result;
     if (is_specified()) {
-        if (_is_single) result.append(SharedPointer<Bool>(new Bool(_value)));
+        if (_is_single) result.push_back(std::make_shared<bool>(_value));
         else {
-            result.append(SharedPointer<Bool>(new Bool(true)));
-            result.append(SharedPointer<Bool>(new Bool(false)));
+            result.push_back(std::make_shared<bool>(true));
+            result.push_back(std::make_shared<bool>(false));
         }
     }
     return result;

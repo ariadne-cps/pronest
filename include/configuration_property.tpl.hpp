@@ -43,13 +43,13 @@ namespace ProNest {
 
 using std::min, std::max;
 
-template<class T> ConfigurationPropertyBase<T>::ConfigurationPropertyBase(Bool const& is_specified) : _is_specified(is_specified) { }
+template<class T> ConfigurationPropertyBase<T>::ConfigurationPropertyBase(bool const& is_specified) : _is_specified(is_specified) { }
 
 template<class T> void ConfigurationPropertyBase<T>::set_specified() {
     _is_specified = true;
 }
 
-template<class T> Bool ConfigurationPropertyBase<T>::is_specified() const {
+template<class T> bool ConfigurationPropertyBase<T>::is_specified() const {
     return _is_specified;
 }
 
@@ -90,17 +90,17 @@ template<class T> T const& RangeConfigurationProperty<T>::get() const {
     return _upper;
 }
 
-template<class T> Bool RangeConfigurationProperty<T>::is_single() const {
+template<class T> bool RangeConfigurationProperty<T>::is_single() const {
     if (not this->is_specified()) return false;
     else return possibly(_lower == _upper);
 }
 
-template<class T> Bool RangeConfigurationProperty<T>::is_metric(ConfigurationPropertyPath const& path) const {
+template<class T> bool RangeConfigurationProperty<T>::is_metric(ConfigurationPropertyPath const& path) const {
     PRONEST_PRECONDITION(path.is_root());
     return true;
 }
 
-template<class T> Bool RangeConfigurationProperty<T>::is_configurable() const {
+template<class T> bool RangeConfigurationProperty<T>::is_configurable() const {
     return false;
 }
 
@@ -186,16 +186,16 @@ template<class T> EnumConfigurationProperty<T>::EnumConfigurationProperty(T cons
     _values.insert(value);
 }
 
-template<class T> Bool EnumConfigurationProperty<T>::is_single() const {
+template<class T> bool EnumConfigurationProperty<T>::is_single() const {
     return (_values.size() == 1);
 }
 
-template<class T> Bool EnumConfigurationProperty<T>::is_metric(ConfigurationPropertyPath const& path) const {
+template<class T> bool EnumConfigurationProperty<T>::is_metric(ConfigurationPropertyPath const& path) const {
     PRONEST_PRECONDITION(path.is_root());
     return false;
 }
 
-template<class T> Bool EnumConfigurationProperty<T>::is_configurable() const {
+template<class T> bool EnumConfigurationProperty<T>::is_configurable() const {
     return false;
 }
 
@@ -272,11 +272,11 @@ template<class T> HandleListConfigurationProperty<T>::HandleListConfigurationPro
         _values.push_back(value);
 }
 
-template<class T> Bool HandleListConfigurationProperty<T>::is_single() const {
+template<class T> bool HandleListConfigurationProperty<T>::is_single() const {
     return (_values.size() == 1);
 }
 
-template<class T> Bool HandleListConfigurationProperty<T>::is_metric(ConfigurationPropertyPath const& path) const {
+template<class T> bool HandleListConfigurationProperty<T>::is_metric(ConfigurationPropertyPath const& path) const {
     if (path.is_root()) return false;
     if (is_configurable()) {
         PRONEST_PRECONDITION(is_single());
@@ -292,7 +292,7 @@ template<class T> Bool HandleListConfigurationProperty<T>::is_metric(Configurati
     }
 }
 
-template<class T> Bool HandleListConfigurationProperty<T>::is_configurable() const {
+template<class T> bool HandleListConfigurationProperty<T>::is_configurable() const {
     PRONEST_ASSERT_MSG(this->is_specified(),"Cannot check if configurable if the property is not specified.");
     PRONEST_PRECONDITION(is_single());
     auto const configurable_interface_ptr = dynamic_cast<const ConfigurableInterface*>(_values.at(0).const_pointer());
@@ -321,7 +321,7 @@ template<class T> void HandleListConfigurationProperty<T>::set_single(Configurat
     if (path.is_root()) {
         local_set_single(integer_value);
     } else { // NOTE : we assume that we already checked for being single when getting the integer_values
-        Bool been_set = false;
+        bool been_set = false;
         auto configurable_interface_ptr = dynamic_cast<ConfigurableInterface*>(_values.at(0).pointer());
         if (configurable_interface_ptr != nullptr) {
             auto properties = configurable_interface_ptr->searchable_configuration().properties();
@@ -405,11 +405,11 @@ template<class T> InterfaceListConfigurationProperty<T>::InterfaceListConfigurat
     _values.push_back(SharedPointer<T>(value.clone()));
 }
 
-template<class T> Bool InterfaceListConfigurationProperty<T>::is_single() const {
+template<class T> bool InterfaceListConfigurationProperty<T>::is_single() const {
     return (_values.size() == 1);
 }
 
-template<class T> Bool InterfaceListConfigurationProperty<T>::is_metric(ConfigurationPropertyPath const& path) const {
+template<class T> bool InterfaceListConfigurationProperty<T>::is_metric(ConfigurationPropertyPath const& path) const {
     if (path.is_root()) return false;
     if (is_configurable()) {
         PRONEST_PRECONDITION(is_single());
@@ -425,7 +425,7 @@ template<class T> Bool InterfaceListConfigurationProperty<T>::is_metric(Configur
     }
 }
 
-template<class T> Bool InterfaceListConfigurationProperty<T>::is_configurable() const {
+template<class T> bool InterfaceListConfigurationProperty<T>::is_configurable() const {
     PRONEST_ASSERT_MSG(this->is_specified(),"Cannot check if configurable if the property is not specified.");
     PRONEST_PRECONDITION(is_single());
     auto configurable_interface_ptr = dynamic_cast<ConfigurableInterface*>(_values.back().get());
@@ -454,7 +454,7 @@ template<class T> void InterfaceListConfigurationProperty<T>::set_single(Configu
     if (path.is_root()) {
         local_set_single(integer_value);
     } else { // NOTE : we assume that we already checked for being single when getting the integer_values
-        Bool been_set = false;
+        bool been_set = false;
         auto configurable_interface_ptr = dynamic_cast<ConfigurableInterface*>(_values.back().get());
         if (configurable_interface_ptr != nullptr) {
             auto properties = configurable_interface_ptr->searchable_configuration().properties();

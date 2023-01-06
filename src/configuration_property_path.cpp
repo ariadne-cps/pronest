@@ -27,7 +27,6 @@
  */
 
 #include "macros.hpp"
-#include "string.hpp"
 #include "configuration_property_path.hpp"
 
 namespace ProNest {
@@ -45,11 +44,11 @@ ConfigurationPropertyPath& ConfigurationPropertyPath::operator=(ConfigurationPro
     return *this;
 }
 
-Bool ConfigurationPropertyPath::operator<(ConfigurationPropertyPath const& path) const {
+bool ConfigurationPropertyPath::operator<(ConfigurationPropertyPath const& path) const {
     return this->repr() < path.repr();
 }
 
-Bool ConfigurationPropertyPath::operator==(ConfigurationPropertyPath const& path) const {
+bool ConfigurationPropertyPath::operator==(ConfigurationPropertyPath const& path) const {
     return this->repr() == path.repr();
 }
 
@@ -59,7 +58,7 @@ String ConfigurationPropertyPath::repr() const {
     return sstream.str();
 }
 
-Bool ConfigurationPropertyPath::is_root() const {
+bool ConfigurationPropertyPath::is_root() const {
     return _path.empty();
 }
 

@@ -39,20 +39,18 @@
 
 namespace ProNest {
 
-class String;
-
 class ConfigurationPropertyPath {
   public:
     ConfigurationPropertyPath() = default;
     ConfigurationPropertyPath(String const& first);
     ConfigurationPropertyPath(ConfigurationPropertyPath const& path);
     ConfigurationPropertyPath& operator=(ConfigurationPropertyPath const& path);
-    Bool operator==(ConfigurationPropertyPath const& path) const;
-    Bool operator<(ConfigurationPropertyPath const& path) const;
+    bool operator==(ConfigurationPropertyPath const& path) const;
+    bool operator<(ConfigurationPropertyPath const& path) const;
 
     String repr() const;
 
-    Bool is_root() const;
+    bool is_root() const;
     ConfigurationPropertyPath& append(String const& node);
     ConfigurationPropertyPath& prepend(String const& node);
     //! \brief Return the first level of the path

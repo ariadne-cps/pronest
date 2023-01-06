@@ -34,6 +34,7 @@
 #define PRONEST_CONFIGURATION_PROPERTY_INTERFACE_HPP
 
 #include "writable.hpp"
+#include "container.hpp"
 
 namespace ProNest {
 
@@ -42,13 +43,13 @@ class ConfigurationPropertyPath;
 class ConfigurationPropertyInterface : public WritableInterface {
   public:
     //! \brief If only one value is specified
-    virtual Bool is_single() const = 0;
+    virtual bool is_single() const = 0;
     //! \brief If values are specified at all
-    virtual Bool is_specified() const = 0;
+    virtual bool is_specified() const = 0;
     //! \brief If the property class at the \a path is metric
-    virtual Bool is_metric(ConfigurationPropertyPath const& path) const = 0;
+    virtual bool is_metric(ConfigurationPropertyPath const& path) const = 0;
     //! \brief If the property object is a configurable itself
-    virtual Bool is_configurable() const = 0;
+    virtual bool is_configurable() const = 0;
     //! \brief The number of values stored for the property
     //! \details Returns 1 if single, 0 if not specified.
     virtual SizeType cardinality() const = 0;

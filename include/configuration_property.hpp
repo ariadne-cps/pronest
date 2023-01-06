@@ -36,6 +36,7 @@
 #include <ostream>
 #include <type_traits>
 #include "macros.hpp"
+#include "container.hpp"
 #include "configuration_interface.hpp"
 #include "configuration_property_interface.hpp"
 #include "configuration_search_space_converter.hpp"
@@ -44,7 +45,7 @@ namespace ProNest {
 
 template<class T> class ConfigurationPropertyBase : public ConfigurationPropertyInterface {
   protected:
-    ConfigurationPropertyBase(Bool const& is_specified);
+    ConfigurationPropertyBase(bool const& is_specified);
     void set_specified();
     virtual List<SharedPointer<T>> values() const = 0;
     virtual void local_set_single(int integer_value) = 0;
@@ -53,41 +54,41 @@ template<class T> class ConfigurationPropertyBase : public ConfigurationProperty
     virtual T const& get() const = 0;
     virtual void set(T const& value) = 0;
 
-    Bool is_specified() const override;
+    bool is_specified() const override;
     Map<ConfigurationPropertyPath,List<int>> integer_values() const override;
 
     //! \brief Supplies the values from the property, empty if not specified, the lower/upper bounds if a range
     OutputStream& _write(OutputStream& os) const override;
   private:
-    Bool _is_specified;
+    bool _is_specified;
 };
 
 //! \brief A property for a boolean value.
-class BooleanConfigurationProperty final : public ConfigurationPropertyBase<Bool> {
+class BooleanConfigurationProperty final : public ConfigurationPropertyBase<bool> {
   public:
     BooleanConfigurationProperty();
-    BooleanConfigurationProperty(Bool const& value);
+    BooleanConfigurationProperty(bool const& value);
 
-    Bool is_single() const override;
-    Bool is_metric(ConfigurationPropertyPath const& path) const override;
-    Bool is_configurable() const override;
+    bool is_single() const override;
+    bool is_metric(ConfigurationPropertyPath const& path) const override;
+    bool is_configurable() const override;
     SizeType cardinality() const override;
 
     ConfigurationPropertyInterface* clone() const override;
 
     ConfigurationPropertyInterface* at(ConfigurationPropertyPath const& path) override;
 
-    Bool const& get() const override;
-    void set(Bool const& value) override;
+    bool const& get() const override;
+    void set(bool const& value) override;
     void set_both(); //! \brief Set to both true and false
     void set_single(ConfigurationPropertyPath const& path, int integer_value) override;
   protected:
     void local_set_single(int integer_value) override;
     List<int> local_integer_values() const override;
-    List<SharedPointer<Bool>> values() const override;
+    List<SharedPointer<bool>> values() const override;
   private:
-    Bool _is_single;
-    Bool _value;
+    bool _is_single;
+    bool _value;
 };
 
 //! \brief A range configuration property offers a range of values with a distance metric
@@ -98,9 +99,9 @@ template<class T> class RangeConfigurationProperty final : public ConfigurationP
     RangeConfigurationProperty(T const& lower, T const& upper, ConfigurationSearchSpaceConverterInterface<T> const& converter = LinearSearchSpaceConverter<T>());
     RangeConfigurationProperty(T const& value, ConfigurationSearchSpaceConverterInterface<T> const& converter = LinearSearchSpaceConverter<T>());
 
-    Bool is_single() const override;
-    Bool is_metric(ConfigurationPropertyPath const& path) const override;
-    Bool is_configurable() const override;
+    bool is_single() const override;
+    bool is_metric(ConfigurationPropertyPath const& path) const override;
+    bool is_configurable() const override;
     SizeType cardinality() const override;
 
     ConfigurationPropertyInterface* clone() const override;
@@ -130,9 +131,9 @@ public:
     EnumConfigurationProperty(Set<T> const& values);
     EnumConfigurationProperty(T const& value);
 
-    Bool is_single() const override;
-        Bool is_metric(ConfigurationPropertyPath const& path) const override;
-    Bool is_configurable() const override;
+    bool is_single() const override;
+        bool is_metric(ConfigurationPropertyPath const& path) const override;
+    bool is_configurable() const override;
     SizeType cardinality() const override;
 
     ConfigurationPropertyInterface* clone() const override;
@@ -159,9 +160,9 @@ public:
     HandleListConfigurationProperty(List<T> const& values);
     HandleListConfigurationProperty(T const& value);
 
-    Bool is_single() const override;
-    Bool is_metric(ConfigurationPropertyPath const& path) const override;
-    Bool is_configurable() const override;
+    bool is_single() const override;
+    bool is_metric(ConfigurationPropertyPath const& path) const override;
+    bool is_configurable() const override;
     SizeType cardinality() const override;
 
     ConfigurationPropertyInterface* clone() const override;
@@ -189,9 +190,9 @@ template<class T> class InterfaceListConfigurationProperty final : public Config
     InterfaceListConfigurationProperty(List<SharedPointer<T>> const& list);
     InterfaceListConfigurationProperty(T const& value);
 
-    Bool is_single() const override;
-    Bool is_metric(ConfigurationPropertyPath const& path) const override;
-    Bool is_configurable() const override;
+    bool is_single() const override;
+    bool is_metric(ConfigurationPropertyPath const& path) const override;
+    bool is_configurable() const override;
     SizeType cardinality() const override;
 
     ConfigurationPropertyInterface* clone() const override;

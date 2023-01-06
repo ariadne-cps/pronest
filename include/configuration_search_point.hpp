@@ -75,9 +75,9 @@ class ConfigurationSearchPoint {
     ConfigurationSearchPoint& operator=(ConfigurationSearchPoint const& p);
     //! \brief Equality check is performed under the assumption that we always work with the same parameters,
     //! hence no space check is performed.
-    Bool operator==(ConfigurationSearchPoint const& p) const;
+    bool operator==(ConfigurationSearchPoint const& p) const;
     //! \brief Ordering is based on point value
-    Bool operator<(ConfigurationSearchPoint const& p) const;
+    bool operator<(ConfigurationSearchPoint const& p) const;
     //! \brief The distance with respect to another point
     //! \details Distance between values for non-metric parameters is either 1 or 0
     Nat distance(ConfigurationSearchPoint const& p) const;

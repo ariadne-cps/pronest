@@ -26,6 +26,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include "container.hpp"
 #include "searchable_configuration.hpp"
 #include "configuration_search_space.hpp"
 
@@ -63,7 +64,7 @@ OutputStream& SearchableConfiguration::_write(OutputStream& os) const {
     os << iter->first << " = " << *iter->second << ")"; return os;
 }
 
-Bool SearchableConfiguration::is_singleton() const {
+bool SearchableConfiguration::is_singleton() const {
     for (auto p : _properties) {
         auto int_values = p.second->integer_values();
         for (auto p_int : int_values) if (p_int.second.size() > 1) return false;

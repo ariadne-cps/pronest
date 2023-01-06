@@ -30,7 +30,7 @@
 
 namespace ProNest {
 
-ConfigurationSearchParameter::ConfigurationSearchParameter(ConfigurationPropertyPath const& path, Bool is_metric, List<int> const& values) :
+ConfigurationSearchParameter::ConfigurationSearchParameter(ConfigurationPropertyPath const& path, bool is_metric, List<int> const& values) :
     _path(path), _is_metric(is_metric), _values(values) {
     PRONEST_PRECONDITION(values.size()>1);
 }
@@ -43,7 +43,7 @@ List<int> const& ConfigurationSearchParameter::values() const {
     return _values;
 }
 
-Bool ConfigurationSearchParameter::is_metric() const {
+bool ConfigurationSearchParameter::is_metric() const {
     return _is_metric;
 }
 
@@ -65,18 +65,22 @@ int ConfigurationSearchParameter::shifted_value_from(int value) const {
     }
 }
 
-Bool ConfigurationSearchParameter::operator==(ConfigurationSearchParameter const& p) const {
+bool ConfigurationSearchParameter::operator==(ConfigurationSearchParameter const& p) const {
     return path() == p.path();
 }
 
-Bool ConfigurationSearchParameter::operator<(ConfigurationSearchParameter const& p) const {
+bool ConfigurationSearchParameter::operator<(ConfigurationSearchParameter const& p) const {
     return path() < p.path();
 }
 
 OutputStream& operator<<(OutputStream& os, ConfigurationSearchParameter const& p) {
     os << "{'" << p._path << "', is_metric=" << p._is_metric << ", values=";
     if (p._is_metric) os << "[" << p._values[0] << ":" << p._values[p._values.size()-1] << "]";
-    else os << p._values;
+    else {
+        os << "[";
+        for (SizeType i=0; i<p._values.size()-1; ++i) os << p._values[i] << ",";
+        os << p._values[p._values.size()-1] << "]";
+    }
     return os << "}";
 }
 

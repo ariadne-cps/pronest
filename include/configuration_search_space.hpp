@@ -68,7 +68,7 @@ class ConfigurationSearchSpace {
     friend OutputStream& operator<<(OutputStream& os, ConfigurationSearchSpace const& space);
 
   private:
-    const List<ConfigurationSearchParameter> _parameters;
+    List<ConfigurationSearchParameter> _parameters;
 };
 
 } // namespace ProNest

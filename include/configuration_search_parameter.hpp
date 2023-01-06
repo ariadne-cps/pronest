@@ -34,6 +34,7 @@
 #define PRONEST_CONFIGURATION_SEARCH_PARAMETER_HPP
 
 #include "declarations.hpp"
+#include "container.hpp"
 #include "macros.hpp"
 #include "configuration_property_path.hpp"
 
@@ -41,25 +42,25 @@ namespace ProNest {
 
 class ConfigurationSearchParameter {
   public:
-    ConfigurationSearchParameter(ConfigurationPropertyPath const& path, Bool is_metric, List<int> const& values);
+    ConfigurationSearchParameter(ConfigurationPropertyPath const& path, bool is_metric, List<int> const& values);
     ConfigurationPropertyPath const& path() const;
     //! \brief Admissible values
     List<int> const& values() const;
     //! \brief Whether the parameter should shift to adjacent values instead of hopping between values
-    Bool is_metric() const;
+    bool is_metric() const;
     //! \brief Generate a random value, useful for the initial value
     int random_value() const;
     //! \brief Randomly get the result from shifting the given \a value
     int shifted_value_from(int value) const;
 
-    Bool operator==(ConfigurationSearchParameter const& p) const;
-    Bool operator<(ConfigurationSearchParameter const& p) const;
+    bool operator==(ConfigurationSearchParameter const& p) const;
+    bool operator<(ConfigurationSearchParameter const& p) const;
 
     friend OutputStream& operator<<(OutputStream& os, ConfigurationSearchParameter const& parameter);
 
   private:
     const ConfigurationPropertyPath _path;
-    const Bool _is_metric;
+    const bool _is_metric;
     const List<int> _values;
 };
 

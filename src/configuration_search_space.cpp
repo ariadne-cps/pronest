@@ -32,9 +32,10 @@
 
 namespace ProNest {
 
-ConfigurationSearchSpace::ConfigurationSearchSpace(Set<ConfigurationSearchParameter> const& parameters)
-        : _parameters(parameters) {
-    PRONEST_PRECONDITION(not _parameters.empty());
+ConfigurationSearchSpace::ConfigurationSearchSpace(Set<ConfigurationSearchParameter> const& parameters) {
+    PRONEST_PRECONDITION(not parameters.empty());
+    for (auto const& p : parameters)
+        _parameters.push_back(p);
 }
 
 ConfigurationSearchPoint ConfigurationSearchSpace::make_point(ParameterBindingsMap const& bindings) const {
@@ -89,7 +90,10 @@ ConfigurationSearchSpace* ConfigurationSearchSpace::clone() const {
 }
 
 OutputStream& operator<<(OutputStream& os, ConfigurationSearchSpace const& space) {
-    return os << space._parameters;
+    os << "[";
+    for (SizeType i=0; i<space._parameters.size()-1; ++i) os << space._parameters[i] << ",";
+    os << space._parameters[space._parameters.size()-1] << "]";
+    return os;
 }
 
 } // namespace ProNest

@@ -56,7 +56,7 @@ class SearchableConfiguration : public ConfigurationInterface {
     ConfigurationSearchSpace search_space() const;
 
     //! \brief If the configuration is made of single values
-    Bool is_singleton() const;
+    bool is_singleton() const;
 
     Map<String,SharedPointer<ConfigurationPropertyInterface>>& properties();
     Map<String,SharedPointer<ConfigurationPropertyInterface>> const& properties() const;

@@ -37,33 +37,28 @@
 #include <iosfwd>
 #include <type_traits>
 #include <memory>
+#include <string>
+#include <ostream>
 
 namespace ProNest {
 
 //! \brief Internal name for standard output stream.
 using OutputStream = std::ostream;
-//! \brief Internal name for standard input stream.
-using InputStream = std::istream;
-//! Internal name for standard string stream.
-using StringStream = std::stringstream;
-//! Internal name for string.
+//! \brief Internal name for string.
 using String = std::string;
+//! \brief Internal name for unsigned integer.
+using Nat = unsigned int;
 
-//! \brief List is actually a vector
-template<class T> using List = std::vector<T>;
-//! \brief Internal name for map
-template<class K, class V> using Map = std::map<K,V>;
-
-//! Internal name for standard size type, used for sizes of containers.
+//! \brief Internal name for standard size type, used for sizes of containers.
 using SizeType = std::size_t;
 
-//! Internal alias for standard shared pointer.
+//! \brief Internal name for standard shared pointer.
 template<class T> using SharedPointer = std::shared_ptr<T>;
-//! Internal alias for standard initializer list.
+//! \brief Internal name for standard initializer list.
 template<class T> using InitializerList = std::initializer_list<T>;
-//! Internal alias for standard pair.
+//! \brief Internal name for standard pair.
 template<class T1, class T2> using Pair = std::pair<T1,T2>;
-//! Internal alias for standard tuple.
+//! \brief Internal name for standard tuple.
 template<class... TS> using Tuple = std::tuple<TS...>;
 
 } // namespace ProNest

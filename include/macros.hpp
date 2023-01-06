@@ -47,7 +47,7 @@
 
 #define PRONEST_THROW(except,func,msg)          \
     { \
-        StringStream ss; \
+        std::stringstream ss; \
         ss << #except " in " << func << ": " << msg;    \
         throw except(ss.str()); \
     } \

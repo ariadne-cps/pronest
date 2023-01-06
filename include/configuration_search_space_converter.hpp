@@ -33,6 +33,7 @@
 #ifndef PRONEST_CONFIGURATION_SEARCH_SPACE_CONVERTER_HPP
 #define PRONEST_CONFIGURATION_SEARCH_SPACE_CONVERTER_HPP
 
+#include <cmath>
 #include "declarations.hpp"
 
 namespace ProNest {
@@ -63,8 +64,8 @@ template<class T> struct LinearSearchSpaceConverter;
 
 template<> struct Log10SearchSpaceConverter<double> : SearchSpaceConverterBase<double> {
     int to_int(double const& value) const override {
-        if (value == inf) return std::numeric_limits<int>::max();
-        else if (value == -inf) return std::numeric_limits<int>::min();
+        if (value == std::numeric_limits<double>::infinity()) return std::numeric_limits<int>::max();
+        else if (value == -std::numeric_limits<double>::infinity()) return std::numeric_limits<int>::min();
         else return std::round(log(value)/log(10.0)); }
     double to_double(double const& value) const override {
         if (value == std::numeric_limits<double>::infinity()) return std::numeric_limits<double>::max();
@@ -92,8 +93,8 @@ template<> struct LinearSearchSpaceConverter<double> : SearchSpaceConverterBase<
         if (value == std::numeric_limits<double>::infinity()) return std::numeric_limits<int>::max();
         else if (value == -std::numeric_limits<double>::infinity()) return std::numeric_limits<int>::min();
         return (int)std::round(value); }
-    double to_double(double const& value) const override { return value.get_d(); }
-    ExactDouble from_double(double value) const override { return cast_exact(ApproximateDouble(value)); }
+    double to_double(double const& value) const override { return value; }
+    double from_double(double value) const override { return value; }
     ConfigurationSearchSpaceConverterInterface* clone() const override { return new LinearSearchSpaceConverter(*this); }
 };
 

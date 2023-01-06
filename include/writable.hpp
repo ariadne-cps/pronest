@@ -34,7 +34,6 @@
 #define PRONEST_WRITABLE_HPP
 
 #include "declarations.hpp"
-#include "metaprogramming.hpp"
 
 namespace ProNest {
 
@@ -49,14 +48,6 @@ class WritableInterface {
     virtual OutputStream& _write(OutputStream&) const = 0;
 };
 inline OutputStream& operator<<(OutputStream& os, const WritableInterface& w) { w._write(os); return os; }
-
-template<class T, class = decltype(declval<T>()._write(declval<OutputStream>()))> True has_write(int);
-template<class T> False has_write(...);
-template<class T, class = Fallback> struct IsWritable : decltype(has_write<T>(1)) { };
-
-template<class T> requires IsWritable<T>::value OutputStream& operator<<(OutputStream& os, const T& t) {
-    return t._write(os);
-}
 
 } // namespace ProNest
 
