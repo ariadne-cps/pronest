@@ -132,7 +132,7 @@ public:
     EnumConfigurationProperty(T const& value);
 
     bool is_single() const override;
-        bool is_metric(ConfigurationPropertyPath const& path) const override;
+    bool is_metric(ConfigurationPropertyPath const& path) const override;
     bool is_configurable() const override;
     SizeType cardinality() const override;
 

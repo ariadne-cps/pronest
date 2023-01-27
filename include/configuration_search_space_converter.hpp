@@ -42,73 +42,53 @@ namespace ProNest {
 template<class T> struct ConfigurationSearchSpaceConverterInterface {
     //! \brief Convert the \a value into an integer value
     virtual int to_int(T const& value) const = 0;
-    //! \brief Convert the \a value into a double value
-    virtual double to_double(T const& value) const = 0;
     //! \brief Convert from an integer value \a i into the original value
     virtual T from_int(int i) const = 0;
-    //! \brief Convert from a double into the original value
-    virtual T from_double(double value) const = 0;
 
     virtual ConfigurationSearchSpaceConverterInterface* clone() const = 0;
     virtual ~ConfigurationSearchSpaceConverterInterface() = default;
-};
-
-template<class T> struct SearchSpaceConverterBase : public ConfigurationSearchSpaceConverterInterface<T> {
-  public:
-    T from_int(int i) const override final { return this->from_double(i); }
 };
 
 template<class T> struct Log10SearchSpaceConverter;
 template<class T> struct Log2SearchSpaceConverter;
 template<class T> struct LinearSearchSpaceConverter;
 
-template<> struct Log10SearchSpaceConverter<double> : SearchSpaceConverterBase<double> {
+template<> struct Log10SearchSpaceConverter<double> : ConfigurationSearchSpaceConverterInterface<double> {
     int to_int(double const& value) const override {
         if (value == std::numeric_limits<double>::infinity()) return std::numeric_limits<int>::max();
         else if (value == -std::numeric_limits<double>::infinity()) return std::numeric_limits<int>::min();
         else return static_cast<int>(std::round(log(value)/log(10.0))); }
-    double to_double(double const& value) const override {
-        if (value == std::numeric_limits<double>::infinity()) return std::numeric_limits<double>::max();
-        else if (value == -std::numeric_limits<double>::infinity()) return std::numeric_limits<double>::min();
-        else return log(value)/log(10.0); }
-    double from_double(double value) const override { return exp(log(10.0)*value); }
+    double from_int(int i) const override { return exp(log(10.0)*i); }
     ConfigurationSearchSpaceConverterInterface* clone() const override { return new Log10SearchSpaceConverter(*this); }
 };
 
-template<> struct Log2SearchSpaceConverter<double> : SearchSpaceConverterBase<double> {
+template<> struct Log2SearchSpaceConverter<double> : ConfigurationSearchSpaceConverterInterface<double> {
     int to_int(double const& value) const override {
         if (value == std::numeric_limits<double>::infinity()) return std::numeric_limits<int>::max();
         else if (value == -std::numeric_limits<double>::infinity()) return std::numeric_limits<int>::min();
         return static_cast<int>(std::round(log(value)/log(2.0))); }
-    double to_double(double const& value) const override {
-        if (value == std::numeric_limits<double>::infinity()) return std::numeric_limits<double>::max();
-        else if (value == -std::numeric_limits<double>::infinity()) return std::numeric_limits<double>::min();
-        return log(value)/log(2.0); }
-    double from_double(double value) const override { return exp(log(2.0)*value); }
+    double from_int(int i) const override { return exp(log(2.0)*i); }
     ConfigurationSearchSpaceConverterInterface* clone() const override { return new Log2SearchSpaceConverter(*this); }
 };
 
-template<> struct LinearSearchSpaceConverter<double> : SearchSpaceConverterBase<double> {
+template<> struct LinearSearchSpaceConverter<double> : ConfigurationSearchSpaceConverterInterface<double> {
     int to_int(double const& value) const override {
         if (value == std::numeric_limits<double>::infinity()) return std::numeric_limits<int>::max();
         else if (value == -std::numeric_limits<double>::infinity()) return std::numeric_limits<int>::min();
         return static_cast<int>(std::round(value)); }
-    double to_double(double const& value) const override { return value; }
-    double from_double(double value) const override { return value; }
+    double from_int(int i) const override { return i; }
     ConfigurationSearchSpaceConverterInterface* clone() const override { return new LinearSearchSpaceConverter(*this); }
 };
 
-template<> struct LinearSearchSpaceConverter<int> : SearchSpaceConverterBase<int> {
+template<> struct LinearSearchSpaceConverter<int> : ConfigurationSearchSpaceConverterInterface<int> {
     int to_int(int const& value) const override { return value; }
-    double to_double(int const& value) const override { return value; }
-    int from_double(double i) const override { return static_cast<int>(std::round(i)); }
+    int from_int(int i) const override { return static_cast<int>(std::round(i)); }
     ConfigurationSearchSpaceConverterInterface* clone() const override { return new LinearSearchSpaceConverter(*this); }
 };
 
-template<> struct LinearSearchSpaceConverter<SizeType> : SearchSpaceConverterBase<SizeType> {
+template<> struct LinearSearchSpaceConverter<SizeType> : ConfigurationSearchSpaceConverterInterface<SizeType> {
     int to_int(SizeType const& value) const override { return static_cast<int>(value); }
-    double to_double(SizeType const& value) const override { return static_cast<double>(value); }
-    SizeType from_double(double i) const override { return static_cast<SizeType>(i); }
+    SizeType from_int(int i) const override { return static_cast<SizeType>(i); }
     ConfigurationSearchSpaceConverterInterface* clone() const override { return new LinearSearchSpaceConverter(*this); }
 };
 
