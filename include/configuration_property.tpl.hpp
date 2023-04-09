@@ -268,7 +268,7 @@ template<class T> HandleListConfigurationProperty<T>::HandleListConfigurationPro
 
 template<class T> HandleListConfigurationProperty<T>::HandleListConfigurationProperty(List<T> const& values)
     : ConfigurationPropertyBase<T>(true), _values(values) {
-        UTILITY_PRECONDITION(values.size()>0);
+        UTILITY_PRECONDITION(not values.empty());
 }
 
 template<class T> HandleListConfigurationProperty<T>::HandleListConfigurationProperty(T const& value)
@@ -345,8 +345,8 @@ template<class T> Map<ConfigurationPropertyPath,List<int>> HandleListConfigurati
     if (is_single()) { // NOTE: we could extend to multiple values by using indexes
         auto configurable_interface_ptr = dynamic_cast<const ConfigurableInterface*>(_values.at(0).const_pointer());
         if (configurable_interface_ptr != nullptr) {
-            for (auto p : configurable_interface_ptr->searchable_configuration().properties()) {
-                for (auto entry : p.second->integer_values()) {
+            for (auto const& p : configurable_interface_ptr->searchable_configuration().properties()) {
+                for (auto const& entry : p.second->integer_values()) {
                     auto prefixed_path = entry.first;
                     prefixed_path.prepend(p.first);
                     result.insert(Pair<ConfigurationPropertyPath,List<int>>(prefixed_path,entry.second));
@@ -372,7 +372,6 @@ template<class T> ConfigurationPropertyInterface* HandleListConfigurationPropert
         UTILITY_ASSERT_MSG(prop_ptr != properties.end(),"The property '" << path.first() << "' was not found in the configuration.");
         return prop_ptr->second->at(path.subpath());
     }
-    return this;
 }
 
 template<class T> T const& HandleListConfigurationProperty<T>::get() const {
@@ -402,7 +401,7 @@ template<class T> List<shared_ptr<T>> HandleListConfigurationProperty<T>::values
 template<class T> InterfaceListConfigurationProperty<T>::InterfaceListConfigurationProperty() : ConfigurationPropertyBase<T>(false) { }
 
 template<class T> InterfaceListConfigurationProperty<T>::InterfaceListConfigurationProperty(List<shared_ptr<T>> const& list) : ConfigurationPropertyBase<T>(true), _values(list) {
-    UTILITY_PRECONDITION(list.size()>0);
+    UTILITY_PRECONDITION(not list.empty());
 }
 
 template<class T> InterfaceListConfigurationProperty<T>::InterfaceListConfigurationProperty(T const& value) : ConfigurationPropertyBase<T>(true) {
@@ -478,8 +477,8 @@ template<class T> Map<ConfigurationPropertyPath,List<int>> InterfaceListConfigur
     if (is_single()) { // NOTE: we could extend to multiple values by using indexes
         auto configurable_interface_ptr = dynamic_cast<ConfigurableInterface*>(_values.back().get());
         if (configurable_interface_ptr != nullptr) {
-            for (auto p : configurable_interface_ptr->searchable_configuration().properties()) {
-                for (auto entry : p.second->integer_values()) {
+            for (auto const& p : configurable_interface_ptr->searchable_configuration().properties()) {
+                for (auto const& entry : p.second->integer_values()) {
                     auto prefixed_path = entry.first;
                     prefixed_path.prepend(p.first);
                     result.insert(Pair<ConfigurationPropertyPath,List<int>>(prefixed_path,entry.second));
@@ -529,7 +528,7 @@ template<class T> void InterfaceListConfigurationProperty<T>::set(shared_ptr<T> 
 }
 
 template<class T> void InterfaceListConfigurationProperty<T>::set(List<shared_ptr<T>> const& values) {
-    UTILITY_PRECONDITION(values.size()>0);
+    UTILITY_PRECONDITION(not values.empty());
     this->set_specified();
     _values = values;
 }

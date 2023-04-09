@@ -34,7 +34,7 @@
 namespace ProNest {
 
 BooleanConfigurationProperty::BooleanConfigurationProperty()
-    : ConfigurationPropertyBase(false), _is_single(false)
+    : ConfigurationPropertyBase(false), _is_single(false), _value(false)
 { }
 
 BooleanConfigurationProperty::BooleanConfigurationProperty(bool const& value)

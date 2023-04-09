@@ -132,15 +132,15 @@ ConfigurationSearchPoint& ConfigurationSearchPoint::operator=(ConfigurationSearc
 }
 
 bool ConfigurationSearchPoint::operator==(ConfigurationSearchPoint const& p) const {
-    for (auto iter=_bindings.begin(); iter!=_bindings.end(); ++iter) {
-        if (p._bindings.at(iter->first) != iter->second)
+    for (auto const& b : _bindings)
+        if (p._bindings.at(b.first) != b.second)
             return false;
-    }
+
     return true;
 }
 
 bool ConfigurationSearchPoint::operator<(ConfigurationSearchPoint const& p) const {
-    for (auto b : _bindings) {
+    for (auto const& b : _bindings) {
         auto const this_value = b.second;
         auto const other_value = p._bindings.at(b.first);
         if (this_value < other_value) return true;
@@ -151,7 +151,7 @@ bool ConfigurationSearchPoint::operator<(ConfigurationSearchPoint const& p) cons
 
 unsigned int ConfigurationSearchPoint::distance(ConfigurationSearchPoint const& p) const {
     unsigned int result = 0;
-    for (auto b : _bindings) {
+    for (auto const& b : _bindings) {
         auto const& param = parameter(b.first);
         auto const v1 = b.second;
         auto const v2 = p._bindings.at(param.path());
@@ -167,7 +167,7 @@ ostream& operator<<(ostream& os, ConfigurationSearchPoint const& point) {
 
 List<unsigned int> ConfigurationSearchPoint::shift_breadths() const {
     if (_CACHED_SHIFT_BREADTHS.empty()) {
-        for (auto b : _bindings) {
+        for (auto const& b : _bindings) {
             auto const& param = parameter(b.first);
             auto const& values = param.values();
             auto size = values.size();
