@@ -40,6 +40,7 @@ namespace ProNest {
 
 using Utility::List;
 using Utility::Map;
+using Utility::WritableInterface;
 
 class ConfigurationPropertyPath;
 
