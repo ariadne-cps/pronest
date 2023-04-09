@@ -43,17 +43,17 @@ ConfigurationSearchPoint::ConfigurationSearchPoint(ConfigurationSearchPoint cons
     this->_space.reset(p.space().clone());
 }
 
-Set<ConfigurationSearchPoint> ConfigurationSearchPoint::make_random_shifted(Nat amount) const {
+Set<ConfigurationSearchPoint> ConfigurationSearchPoint::make_random_shifted(unsigned int amount) const {
     Set<ConfigurationSearchPoint> result;
     ConfigurationSearchPoint current_point = *this;
     result.insert(current_point);
     while (result.size() < amount) {
-        List<Nat> breadths = current_point.shift_breadths();
-        Nat total_breadth = 0; for (auto b : breadths) total_breadth += b;
+        List<unsigned int> breadths = current_point.shift_breadths();
+        unsigned int total_breadth = 0; for (auto b : breadths) total_breadth += b;
         auto space = this->space();
 
-        Nat offset = (Nat)rand() % total_breadth;
-        Nat current_breadth = 0;
+        unsigned int offset = (unsigned int)rand() % total_breadth;
+        unsigned int current_breadth = 0;
         ParameterBindingsMap shifted_bindings;
         bool shifted = false;
         for (auto binding : current_point.bindings()) {
@@ -68,24 +68,24 @@ Set<ConfigurationSearchPoint> ConfigurationSearchPoint::make_random_shifted(Nat 
         }
         result.insert(space.make_point(shifted_bindings));
 
-        Nat new_choice = (Nat)rand() % result.size();
+        unsigned int new_choice = (unsigned int)rand() % result.size();
         auto iter = result.begin();
-        for (Nat i=0; i<new_choice; ++i) ++iter;
+        for (unsigned int i=0; i<new_choice; ++i) ++iter;
         current_point = *iter;
     }
     return result;
 }
 
 ConfigurationSearchPoint ConfigurationSearchPoint::make_adjacent_shifted() const {
-    List<Nat> breadths = this->shift_breadths();
-    Nat total_breadth = 0;
+    List<unsigned int> breadths = this->shift_breadths();
+    unsigned int total_breadth = 0;
     for (auto b : breadths) total_breadth += b;
     UTILITY_PRECONDITION(total_breadth != 0);
     Set<ConfigurationSearchPoint> result;
     auto space = this->space();
-    Nat offset = (Nat)rand() % total_breadth;
+    unsigned int offset = (unsigned int)rand() % total_breadth;
 
-    Nat current_breadth = 0;
+    unsigned int current_breadth = 0;
     ParameterBindingsMap shifted_bindings;
     bool shifted = false;
     for (auto binding : _bindings) {
@@ -117,7 +117,7 @@ int ConfigurationSearchPoint::value(ConfigurationPropertyPath const& path) const
     return _bindings.at(path);
 }
 
-SizeType ConfigurationSearchPoint::index(ConfigurationPropertyPath const& path) const {
+size_t ConfigurationSearchPoint::index(ConfigurationPropertyPath const& path) const {
     return _space->index(path);
 }
 
@@ -151,13 +151,13 @@ bool ConfigurationSearchPoint::operator<(ConfigurationSearchPoint const& p) cons
     return false; // They are equal
 }
 
-Nat ConfigurationSearchPoint::distance(ConfigurationSearchPoint const& p) const {
-    Nat result = 0;
+unsigned int ConfigurationSearchPoint::distance(ConfigurationSearchPoint const& p) const {
+    unsigned int result = 0;
     for (auto b : _bindings) {
         auto const& param = parameter(b.first);
         auto const v1 = b.second;
         auto const v2 = p._bindings.at(param.path());
-        if (param.is_metric()) result += (v1 > v2 ? (Nat)(v1 - v2) : (Nat)(v2 - v1));
+        if (param.is_metric()) result += (v1 > v2 ? (unsigned int)(v1 - v2) : (unsigned int)(v2 - v1));
         else result += (v1 == v2 ? 0 : 1);
     }
     return result;
@@ -167,13 +167,13 @@ OutputStream& operator<<(OutputStream& os, ConfigurationSearchPoint const& point
     return os << point._bindings.values();
 }
 
-List<Nat> ConfigurationSearchPoint::shift_breadths() const {
+List<unsigned int> ConfigurationSearchPoint::shift_breadths() const {
     if (_CACHED_SHIFT_BREADTHS.empty()) {
         for (auto b : _bindings) {
             auto const& param = parameter(b.first);
             auto const& values = param.values();
             auto size = values.size();
-            if (not param.is_metric()) _CACHED_SHIFT_BREADTHS.push_back(static_cast<Nat>(size-1)); // all except the current
+            if (not param.is_metric()) _CACHED_SHIFT_BREADTHS.push_back(static_cast<unsigned int>(size-1)); // all except the current
             else if (b.second == values[size-1]) _CACHED_SHIFT_BREADTHS.push_back(1); // can only move down
             else if (b.second == values[0]) _CACHED_SHIFT_BREADTHS.push_back(1); // can only move up
             else _CACHED_SHIFT_BREADTHS.push_back(2);; // can move either up or down
@@ -182,7 +182,7 @@ List<Nat> ConfigurationSearchPoint::shift_breadths() const {
     return _CACHED_SHIFT_BREADTHS;
 }
 
-Set<ConfigurationSearchPoint> make_extended_set_by_shifting(Set<ConfigurationSearchPoint> const& sources, SizeType size) {
+Set<ConfigurationSearchPoint> make_extended_set_by_shifting(Set<ConfigurationSearchPoint> const& sources, size_t size) {
     UTILITY_PRECONDITION(size>=sources.size());
     UTILITY_PRECONDITION(sources.begin()->space().total_points() >= size);
     auto expanded_sources = sources; // To be be expanded if the previous sources are incapable of getting the required size
@@ -190,7 +190,7 @@ Set<ConfigurationSearchPoint> make_extended_set_by_shifting(Set<ConfigurationSea
 
     while (result.size() < size) {
         auto source_it = expanded_sources.begin();
-        SizeType previous_size = result.size();
+        size_t previous_size = result.size();
         while (result.size() < size) {
             result.insert(source_it->make_adjacent_shifted());
             ++source_it; // Will move to next source even if no shift has been found

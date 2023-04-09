@@ -54,7 +54,7 @@ class ConfigurationPropertyInterface : public WritableInterface {
     virtual bool is_configurable() const = 0;
     //! \brief The number of values stored for the property
     //! \details Returns 1 if single, 0 if not specified.
-    virtual SizeType cardinality() const = 0;
+    virtual size_t cardinality() const = 0;
     //! \brief Set to a single value a given path, starting from this property
     //! \details Supports the storage of objects that are Configurable themselves
     virtual void set_single(ConfigurationPropertyPath const& path, int integer_value) = 0;

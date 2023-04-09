@@ -58,18 +58,18 @@ ConfigurationSearchPoint ConfigurationSearchSpace::initial_point() const {
     return ConfigurationSearchPoint(*this, pb);
 }
 
-SizeType ConfigurationSearchSpace::index(ConfigurationSearchParameter const& p) const {
-    for (SizeType i=0; i<_parameters.size(); ++i) if (_parameters.at(i) == p) return i;
+size_t ConfigurationSearchSpace::index(ConfigurationSearchParameter const& p) const {
+    for (size_t i=0; i<_parameters.size(); ++i) if (_parameters.at(i) == p) return i;
     UTILITY_FAIL_MSG("Task parameter '" << p << "' not found in the space.");
 }
 
-SizeType ConfigurationSearchSpace::index(ConfigurationPropertyPath const& path) const {
-    for (SizeType i=0; i<_parameters.size(); ++i) if (_parameters.at(i).path() == path) return i;
+size_t ConfigurationSearchSpace::index(ConfigurationPropertyPath const& path) const {
+    for (size_t i=0; i<_parameters.size(); ++i) if (_parameters.at(i).path() == path) return i;
     UTILITY_FAIL_MSG("Task parameter with path '" << path << "' not found in the space.");
 }
 
 ConfigurationSearchParameter const& ConfigurationSearchSpace::parameter(ConfigurationPropertyPath const& path) const {
-    for (SizeType i=0; i<_parameters.size(); ++i) if (_parameters.at(i).path() == path) return _parameters.at(i);
+    for (size_t i=0; i<_parameters.size(); ++i) if (_parameters.at(i).path() == path) return _parameters.at(i);
     UTILITY_FAIL_MSG("Task parameter with path '" << path << "' not found in the space.");
 }
 
@@ -77,13 +77,13 @@ List<ConfigurationSearchParameter> const& ConfigurationSearchSpace::parameters()
     return _parameters;
 }
 
-SizeType ConfigurationSearchSpace::total_points() const {
-    SizeType result = 1;
+size_t ConfigurationSearchSpace::total_points() const {
+    size_t result = 1;
     for (auto p : _parameters) result *= p.values().size();
     return result;
 }
 
-SizeType ConfigurationSearchSpace::dimension() const {
+size_t ConfigurationSearchSpace::dimension() const {
     return _parameters.size();
 }
 
@@ -93,7 +93,7 @@ ConfigurationSearchSpace* ConfigurationSearchSpace::clone() const {
 
 OutputStream& operator<<(OutputStream& os, ConfigurationSearchSpace const& space) {
     os << "[";
-    for (SizeType i=0; i<space._parameters.size()-1; ++i) os << space._parameters[i] << ",";
+    for (size_t i=0; i<space._parameters.size()-1; ++i) os << space._parameters[i] << ",";
     os << space._parameters[space._parameters.size()-1] << "]";
     return os;
 }

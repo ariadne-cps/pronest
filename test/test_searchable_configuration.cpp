@@ -33,6 +33,7 @@
 #include "configurable.tpl.hpp"
 #include "configuration_search_point.hpp"
 
+using namespace std;
 using namespace ProNest;
 using namespace Utility;
 
@@ -115,7 +116,7 @@ template<> struct Configuration<A> : public SearchableConfiguration {
 
     TestConfigurableInterface const& test_configurable() const { return at<TestConfigurableConfigurationProperty>("test_configurable").get(); }
     void set_test_configurable(TestConfigurableInterface const& test_configurable) { at<TestConfigurableConfigurationProperty>("test_configurable").set(test_configurable); }
-    void set_test_configurable(SharedPointer<TestConfigurableInterface> const& test_configurable) { at<TestConfigurableConfigurationProperty>("test_configurable").set(test_configurable); }
+    void set_test_configurable(shared_ptr<TestConfigurableInterface> const& test_configurable) { at<TestConfigurableConfigurationProperty>("test_configurable").set(test_configurable); }
 };
 
 }

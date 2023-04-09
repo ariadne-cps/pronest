@@ -53,13 +53,13 @@ class ConfigurationSearchSpace {
     List<ConfigurationSearchParameter> const& parameters() const;
 
     //! \brief The total number of points identified by the space
-    SizeType total_points() const;
+    size_t total_points() const;
     //! \brief The number of parameters in the space
-    SizeType dimension() const;
+    size_t dimension() const;
     //! \brief The index of the given parameter in the ordered space
-    SizeType index(ConfigurationSearchParameter const& p) const;
+    size_t index(ConfigurationSearchParameter const& p) const;
     //! \brief The index of the given parameter identifier in the ordered space
-    SizeType index(ConfigurationPropertyPath const& name) const;
+    size_t index(ConfigurationPropertyPath const& name) const;
     //! \brief The parameter corresponding to the path \a path
     ConfigurationSearchParameter const& parameter(ConfigurationPropertyPath const& path) const;
 

@@ -42,8 +42,6 @@
 #ifndef PRONEST_CONFIGURABLE_HPP
 #define PRONEST_CONFIGURABLE_HPP
 
-#include "declarations.hpp"
-
 namespace ProNest {
 
 class SearchableConfiguration;

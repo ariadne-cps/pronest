@@ -32,33 +32,33 @@
 
 namespace ProNest {
 
-template<class T> using SharedPointer = std::shared_ptr<T>;
+template<class T> using shared_ptr = std::shared_ptr<T>;
 
 SearchableConfiguration::SearchableConfiguration(SearchableConfiguration const& c) {
-    for (auto p : c.properties()) _properties.insert(Pair<String,SharedPointer<ConfigurationPropertyInterface>>(p.first,SharedPointer<ConfigurationPropertyInterface>(p.second->clone())));
+    for (auto p : c.properties()) _properties.insert(Pair<String,shared_ptr<ConfigurationPropertyInterface>>(p.first,shared_ptr<ConfigurationPropertyInterface>(p.second->clone())));
 }
 
 SearchableConfiguration& SearchableConfiguration::operator=(SearchableConfiguration const& c) {
     _properties.clear();
-    for (auto p : c.properties()) _properties.insert(Pair<String,SharedPointer<ConfigurationPropertyInterface>>(p.first,SharedPointer<ConfigurationPropertyInterface>(p.second->clone())));
+    for (auto p : c.properties()) _properties.insert(Pair<String,shared_ptr<ConfigurationPropertyInterface>>(p.first,shared_ptr<ConfigurationPropertyInterface>(p.second->clone())));
     return *this;
 }
 
-Map<String,SharedPointer<ConfigurationPropertyInterface>>& SearchableConfiguration::properties() {
+Map<String,shared_ptr<ConfigurationPropertyInterface>>& SearchableConfiguration::properties() {
     return _properties;
 }
 
-Map<String,SharedPointer<ConfigurationPropertyInterface>> const& SearchableConfiguration::properties() const {
+Map<String,shared_ptr<ConfigurationPropertyInterface>> const& SearchableConfiguration::properties() const {
     return _properties;
 }
 
 void SearchableConfiguration::add_property(String const& name, ConfigurationPropertyInterface const& property) {
-    _properties.insert(Pair<String,SharedPointer<ConfigurationPropertyInterface>>({name,SharedPointer<ConfigurationPropertyInterface>(property.clone())}));
+    _properties.insert(Pair<String,shared_ptr<ConfigurationPropertyInterface>>({name,shared_ptr<ConfigurationPropertyInterface>(property.clone())}));
 }
 
 OutputStream& SearchableConfiguration::_write(OutputStream& os) const {
     os << "(\n";
-    auto iter = _properties.begin(); SizeType i=0;
+    auto iter = _properties.begin(); size_t i=0;
     while (i<_properties.size()-1) {
         os << iter->first << " = " << *iter->second << ",\n";
         ++iter; ++i;

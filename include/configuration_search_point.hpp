@@ -63,14 +63,14 @@ class ConfigurationSearchPoint {
     //! then the next point to shift from is a random one from those already generated
     //! \details Guarantees that all points are different. Includes the original point.
     //! If \a amount is 1, no new point is generated.
-    Set<ConfigurationSearchPoint> make_random_shifted(Nat amount) const;
+    Set<ConfigurationSearchPoint> make_random_shifted(unsigned int amount) const;
 
     ParameterBindingsMap const& bindings() const;
 
     //! \brief The value of the point for the given parameter path \a path
     int value(ConfigurationPropertyPath const& path) const;
     //! \brief The index in the space for the parameter identifier \a path
-    SizeType index(ConfigurationPropertyPath const& path) const;
+    size_t index(ConfigurationPropertyPath const& path) const;
     //! \brief The parameter corresponding to the identifier \a path
     ConfigurationSearchParameter const& parameter(ConfigurationPropertyPath const& path) const;
 
@@ -82,10 +82,10 @@ class ConfigurationSearchPoint {
     bool operator<(ConfigurationSearchPoint const& p) const;
     //! \brief The distance with respect to another point
     //! \details Distance between values for non-metric parameters is either 1 or 0
-    Nat distance(ConfigurationSearchPoint const& p) const;
+    unsigned int distance(ConfigurationSearchPoint const& p) const;
 
     //! \brief Compute the breadth of possible shifts of the point for each parameter
-    List<Nat> shift_breadths() const;
+    List<unsigned int> shift_breadths() const;
 
     friend OutputStream& operator<<(OutputStream& os, ConfigurationSearchPoint const& point);
   private:
@@ -93,7 +93,7 @@ class ConfigurationSearchPoint {
     std::shared_ptr<ConfigurationSearchSpace> _space;
     ParameterBindingsMap _bindings;
 
-    mutable List<Nat> _CACHED_SHIFT_BREADTHS;
+    mutable List<unsigned int> _CACHED_SHIFT_BREADTHS;
 };
 
 //! \brief Generate an \a amount of new points from \a sources, by shifting one parameter each (ideally, see details)
@@ -102,7 +102,7 @@ class ConfigurationSearchPoint {
 //! for the space. Shifting points are chosen by rotation, skipping to the next if the generated point is not new-
 //! An effort is made to shift only by 1 with respect to the sources, but if not possible then the generated
 //! points are added to the points used for shifting.
-Set<ConfigurationSearchPoint> make_extended_set_by_shifting(Set<ConfigurationSearchPoint> const& sources, SizeType size);
+Set<ConfigurationSearchPoint> make_extended_set_by_shifting(Set<ConfigurationSearchPoint> const& sources, size_t size);
 
 //! \brief Make a configuration from another configuration \a cfg and a point \a p in the search space
 template<class C> Configuration<C> make_singleton(Configuration<C> const& cfg, ConfigurationSearchPoint const& p) {

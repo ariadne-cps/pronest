@@ -66,7 +66,7 @@ bool BooleanConfigurationProperty::is_configurable() const {
     return false;
 }
 
-SizeType BooleanConfigurationProperty::cardinality() const {
+size_t BooleanConfigurationProperty::cardinality() const {
     if (_is_single) return 1;
     else if (this->is_specified()) return 2;
     else return 0;
@@ -107,8 +107,8 @@ void BooleanConfigurationProperty::set(bool const& value) {
     _value=value;
 }
 
-List<SharedPointer<bool>> BooleanConfigurationProperty::values() const {
-    List<SharedPointer<bool>> result;
+List<shared_ptr<bool>> BooleanConfigurationProperty::values() const {
+    List<shared_ptr<bool>> result;
     if (is_specified()) {
         if (_is_single) result.push_back(std::make_shared<bool>(_value));
         else {

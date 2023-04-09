@@ -67,7 +67,7 @@ template<class T> OutputStream& ConfigurationPropertyBase<T>::_write(OutputStrea
     else if (vals.size() == 1) { os << *vals[0]; }
     else {
         os << "{";
-        for (SizeType i=0; i<vals.size()-1; ++i) os << *vals[i] << ",";
+        for (size_t i=0; i<vals.size()-1; ++i) os << *vals[i] << ",";
         os << *vals[vals.size()-1] << "}";
     }
     return os;
@@ -75,11 +75,11 @@ template<class T> OutputStream& ConfigurationPropertyBase<T>::_write(OutputStrea
 
 template<class T> RangeConfigurationProperty<T>::RangeConfigurationProperty(ConfigurationSearchSpaceConverterInterface<T> const& converter) :
         ConfigurationPropertyBase<T>(false), _lower(T()), _upper(T()),
-        _converter(SharedPointer<ConfigurationSearchSpaceConverterInterface<T>>(converter.clone())) { }
+        _converter(shared_ptr<ConfigurationSearchSpaceConverterInterface<T>>(converter.clone())) { }
 
 template<class T> RangeConfigurationProperty<T>::RangeConfigurationProperty(T const& lower, T const& upper, ConfigurationSearchSpaceConverterInterface<T> const& converter) :
         ConfigurationPropertyBase<T>(true), _lower(lower), _upper(upper),
-        _converter(SharedPointer<ConfigurationSearchSpaceConverterInterface<T>>(converter.clone())) {
+        _converter(shared_ptr<ConfigurationSearchSpaceConverterInterface<T>>(converter.clone())) {
     UTILITY_PRECONDITION(not possibly(upper < lower));
 }
 
@@ -106,10 +106,10 @@ template<class T> bool RangeConfigurationProperty<T>::is_configurable() const {
     return false;
 }
 
-template<class T> SizeType RangeConfigurationProperty<T>::cardinality() const {
+template<class T> size_t RangeConfigurationProperty<T>::cardinality() const {
     if (is_single()) return 1;
     else if (not this->is_specified()) return 0;
-    else return 1+(SizeType)(_converter->to_int(_upper) - _converter->to_int(_lower));
+    else return 1+(size_t)(_converter->to_int(_upper) - _converter->to_int(_lower));
 }
 
 template<class T> List<int> RangeConfigurationProperty<T>::local_integer_values() const {
@@ -162,8 +162,8 @@ template<class T> void RangeConfigurationProperty<T>::set(T const& value) {
     _upper = value;
 }
 
-template<class T> List<SharedPointer<T>> RangeConfigurationProperty<T>::values() const {
-    List<SharedPointer<T>> result;
+template<class T> List<shared_ptr<T>> RangeConfigurationProperty<T>::values() const {
+    List<shared_ptr<T>> result;
     if (this->is_specified()) {
         result.push_back(std::make_shared<T>(_lower));
         if (not is_single()) result.push_back(std::make_shared<T>(_upper));
@@ -201,13 +201,13 @@ template<class T> bool EnumConfigurationProperty<T>::is_configurable() const {
     return false;
 }
 
-template<class T> SizeType EnumConfigurationProperty<T>::cardinality() const {
+template<class T> size_t EnumConfigurationProperty<T>::cardinality() const {
     return _values.size();
 }
 
 template<class T> List<int> EnumConfigurationProperty<T>::local_integer_values() const {
     List<int> result;
-    for (SizeType i=0; i<_values.size(); ++i) result.push_back(static_cast<int>(i));
+    for (size_t i=0; i<_values.size(); ++i) result.push_back(static_cast<int>(i));
     return result;
 }
 
@@ -221,7 +221,7 @@ template<class T> void EnumConfigurationProperty<T>::local_set_single(int intege
     UTILITY_PRECONDITION(not is_single());
     UTILITY_PRECONDITION(integer_value >= 0 and integer_value < (int)cardinality());
     auto iter = _values.begin();
-    for (SizeType i=0;i<(SizeType)integer_value;++i) ++iter;
+    for (size_t i=0;i<(size_t)integer_value;++i) ++iter;
     T value = *iter;
     _values.clear();
     _values.insert(value);
@@ -254,9 +254,9 @@ template<class T> void EnumConfigurationProperty<T>::set(Set<T> const& values) {
     _values = values;
 }
 
-template<class T> List<SharedPointer<T>> EnumConfigurationProperty<T>::values() const {
-    List<SharedPointer<T>> result;
-    for (auto v : _values) result.push_back(SharedPointer<T>(new T(v)));
+template<class T> List<shared_ptr<T>> EnumConfigurationProperty<T>::values() const {
+    List<shared_ptr<T>> result;
+    for (auto v : _values) result.push_back(shared_ptr<T>(new T(v)));
     return result;
 }
 
@@ -301,20 +301,20 @@ template<class T> bool HandleListConfigurationProperty<T>::is_configurable() con
     return (configurable_interface_ptr != nullptr);
 }
 
-template<class T> SizeType HandleListConfigurationProperty<T>::cardinality() const {
+template<class T> size_t HandleListConfigurationProperty<T>::cardinality() const {
     return _values.size();
 }
 
 template<class T> List<int> HandleListConfigurationProperty<T>::local_integer_values() const {
     List<int> result;
-    for (SizeType i=0; i<_values.size(); ++i) result.push_back(static_cast<int>(i));
+    for (size_t i=0; i<_values.size(); ++i) result.push_back(static_cast<int>(i));
     return result;
 }
 
 template<class T> void HandleListConfigurationProperty<T>::local_set_single(int integer_value) {
     UTILITY_PRECONDITION(not is_single());
     UTILITY_PRECONDITION(integer_value >= 0 and integer_value < (int)cardinality());
-    T value = _values[(SizeType)integer_value];
+    T value = _values[(size_t)integer_value];
     _values.clear();
     _values.push_back(value);
 }
@@ -391,20 +391,20 @@ template<class T> void HandleListConfigurationProperty<T>::set(List<T> const& va
     _values = values;
 }
 
-template<class T> List<SharedPointer<T>> HandleListConfigurationProperty<T>::values() const {
-    List<SharedPointer<T>> result;
-    for (auto v : _values) result.push_back(SharedPointer<T>(new T(v)));
+template<class T> List<shared_ptr<T>> HandleListConfigurationProperty<T>::values() const {
+    List<shared_ptr<T>> result;
+    for (auto v : _values) result.push_back(shared_ptr<T>(new T(v)));
     return result;
 }
 
 template<class T> InterfaceListConfigurationProperty<T>::InterfaceListConfigurationProperty() : ConfigurationPropertyBase<T>(false) { }
 
-template<class T> InterfaceListConfigurationProperty<T>::InterfaceListConfigurationProperty(List<SharedPointer<T>> const& list) : ConfigurationPropertyBase<T>(true), _values(list) {
+template<class T> InterfaceListConfigurationProperty<T>::InterfaceListConfigurationProperty(List<shared_ptr<T>> const& list) : ConfigurationPropertyBase<T>(true), _values(list) {
     UTILITY_PRECONDITION(list.size()>0);
 }
 
 template<class T> InterfaceListConfigurationProperty<T>::InterfaceListConfigurationProperty(T const& value) : ConfigurationPropertyBase<T>(true) {
-    _values.push_back(SharedPointer<T>(value.clone()));
+    _values.push_back(shared_ptr<T>(value.clone()));
 }
 
 template<class T> bool InterfaceListConfigurationProperty<T>::is_single() const {
@@ -434,20 +434,20 @@ template<class T> bool InterfaceListConfigurationProperty<T>::is_configurable() 
     return (configurable_interface_ptr != nullptr);
 }
 
-template<class T> SizeType InterfaceListConfigurationProperty<T>::cardinality() const {
+template<class T> size_t InterfaceListConfigurationProperty<T>::cardinality() const {
     return _values.size();
 }
 
 template<class T> List<int> InterfaceListConfigurationProperty<T>::local_integer_values() const {
     List<int> result;
-    for (SizeType i=0; i<_values.size(); ++i) result.push_back(static_cast<int>(i));
+    for (size_t i=0; i<_values.size(); ++i) result.push_back(static_cast<int>(i));
     return result;
 }
 
 template<class T> void InterfaceListConfigurationProperty<T>::local_set_single(int integer_value) {
     UTILITY_PRECONDITION(not is_single());
     UTILITY_PRECONDITION(integer_value >= 0 and integer_value < (int)cardinality());
-    SharedPointer<T> value = _values[(SizeType)integer_value];
+    shared_ptr<T> value = _values[(size_t)integer_value];
     _values.clear();
     _values.push_back(value);
 }
@@ -489,8 +489,8 @@ template<class T> Map<ConfigurationPropertyPath,List<int>> InterfaceListConfigur
 }
 
 template<class T> ConfigurationPropertyInterface* InterfaceListConfigurationProperty<T>::clone() const {
-    List<SharedPointer<T>> values;
-    for (auto ptr : _values) values.push_back(SharedPointer<T>(ptr->clone()));
+    List<shared_ptr<T>> values;
+    for (auto ptr : _values) values.push_back(shared_ptr<T>(ptr->clone()));
     return new InterfaceListConfigurationProperty(values);
 }
 
@@ -516,23 +516,23 @@ template<class T> T const& InterfaceListConfigurationProperty<T>::get() const {
 template<class T> void InterfaceListConfigurationProperty<T>::set(T const& value) {
     this->set_specified();
     _values.clear();
-    _values.push_back(SharedPointer<T>(value.clone()));
+    _values.push_back(shared_ptr<T>(value.clone()));
 }
 
-template<class T> void InterfaceListConfigurationProperty<T>::set(SharedPointer<T> const& value) {
+template<class T> void InterfaceListConfigurationProperty<T>::set(shared_ptr<T> const& value) {
     UTILITY_PRECONDITION(value != nullptr);
     this->set_specified();
     _values.clear();
     _values.push_back(value);
 }
 
-template<class T> void InterfaceListConfigurationProperty<T>::set(List<SharedPointer<T>> const& values) {
+template<class T> void InterfaceListConfigurationProperty<T>::set(List<shared_ptr<T>> const& values) {
     UTILITY_PRECONDITION(values.size()>0);
     this->set_specified();
     _values = values;
 }
 
-template<class T> List<SharedPointer<T>> InterfaceListConfigurationProperty<T>::values() const {
+template<class T> List<shared_ptr<T>> InterfaceListConfigurationProperty<T>::values() const {
     return _values;
 }
 

@@ -31,6 +31,7 @@
 #include "searchable_configuration.hpp"
 #include "configuration_property.tpl.hpp"
 
+using namespace std;
 using namespace ProNest;
 
 enum class LevelOptions { LOW, MEDIUM, HIGH };
@@ -329,10 +330,10 @@ class TestConfiguration {
         UTILITY_TEST_ASSERT(p2.is_specified());
         UTILITY_TEST_ASSERT(p2.is_single());
         UTILITY_TEST_EQUALS(p2.cardinality(),1);
-        List<SharedPointer<TestInterface>> tests;
+        List<shared_ptr<TestInterface>> tests;
         UTILITY_TEST_FAIL(new TestInterfaceListConfigurationProperty(tests));
-        tests.push_back(SharedPointer<TestInterface>(new A()));
-        tests.push_back(SharedPointer<TestInterface>(new B()));
+        tests.push_back(shared_ptr<TestInterface>(new A()));
+        tests.push_back(shared_ptr<TestInterface>(new B()));
         TestInterfaceListConfigurationProperty p3(tests);
         UTILITY_TEST_ASSERT(p3.is_specified());
         UTILITY_TEST_ASSERT(not p3.is_single());
@@ -350,10 +351,10 @@ class TestConfiguration {
         UTILITY_TEST_ASSERT(p.is_single());
         UTILITY_TEST_EQUALS(p.cardinality(),1);
         UTILITY_TEST_EQUALS(p.integer_values().begin()->second.size(),1);
-        List<SharedPointer<TestInterface>> tests;
+        List<shared_ptr<TestInterface>> tests;
         UTILITY_TEST_FAIL(p.set(tests));
-        tests.push_back(SharedPointer<TestInterface>(new A()));
-        tests.push_back(SharedPointer<TestInterface>(new B()));
+        tests.push_back(shared_ptr<TestInterface>(new A()));
+        tests.push_back(shared_ptr<TestInterface>(new B()));
         p.set(tests);
         UTILITY_TEST_ASSERT(p.is_specified());
         UTILITY_TEST_ASSERT(not p.is_single());
@@ -362,9 +363,9 @@ class TestConfiguration {
     }
 
     void test_interface_configuration_property_set_single() {
-        List<SharedPointer<TestInterface>> tests;
-        tests.push_back(SharedPointer<TestInterface>(new A()));
-        tests.push_back(SharedPointer<TestInterface>(new B()));
+        List<shared_ptr<TestInterface>> tests;
+        tests.push_back(shared_ptr<TestInterface>(new A()));
+        tests.push_back(shared_ptr<TestInterface>(new B()));
         TestInterfaceListConfigurationProperty p(tests);
         p.set_single(ConfigurationPropertyPath(),0);
         UTILITY_TEST_ASSERT(p.is_single());

@@ -35,7 +35,6 @@
 
 #include "utility/container.hpp"
 #include "utility/macros.hpp"
-#include "declarations.hpp"
 #include "configuration_property_path.hpp"
 
 using namespace Utility;

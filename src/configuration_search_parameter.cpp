@@ -48,18 +48,18 @@ bool ConfigurationSearchParameter::is_metric() const {
 }
 
 int ConfigurationSearchParameter::random_value() const {
-    return _values[(SizeType)rand() % _values.size()];
+    return _values[(size_t)rand() % _values.size()];
 }
 
 int ConfigurationSearchParameter::shifted_value_from(int value) const {
-    SizeType num_values = _values.size();
+    size_t num_values = _values.size();
     if (_is_metric) {
         if (value == _values[0]) return value+1;
         if (value == _values[num_values-1]) return value-1;
-        if ((SizeType)rand() % 2 == 0) return value+1;
+        if ((size_t)rand() % 2 == 0) return value+1;
         else return value-1;
     } else {
-        SizeType rand_value = (SizeType)rand() % (num_values-1);
+        size_t rand_value = (size_t)rand() % (num_values-1);
         if (_values[rand_value] == value) return _values[num_values-1];
         else return _values[rand_value];
     }
@@ -78,7 +78,7 @@ OutputStream& operator<<(OutputStream& os, ConfigurationSearchParameter const& p
     if (p._is_metric) os << "[" << p._values[0] << ":" << p._values[p._values.size()-1] << "]";
     else {
         os << "[";
-        for (SizeType i=0; i<p._values.size()-1; ++i) os << p._values[i] << ",";
+        for (size_t i=0; i<p._values.size()-1; ++i) os << p._values[i] << ",";
         os << p._values[p._values.size()-1] << "]";
     }
     return os << "}";

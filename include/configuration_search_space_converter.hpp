@@ -34,7 +34,6 @@
 #define PRONEST_CONFIGURATION_SEARCH_SPACE_CONVERTER_HPP
 
 #include <cmath>
-#include "declarations.hpp"
 
 namespace ProNest {
 
@@ -86,9 +85,9 @@ template<> struct LinearSearchSpaceConverter<int> : ConfigurationSearchSpaceConv
     ConfigurationSearchSpaceConverterInterface* clone() const override { return new LinearSearchSpaceConverter(*this); }
 };
 
-template<> struct LinearSearchSpaceConverter<SizeType> : ConfigurationSearchSpaceConverterInterface<SizeType> {
-    int to_int(SizeType const& value) const override { return static_cast<int>(value); }
-    SizeType from_int(int i) const override { return static_cast<SizeType>(i); }
+template<> struct LinearSearchSpaceConverter<size_t> : ConfigurationSearchSpaceConverterInterface<size_t> {
+    int to_int(size_t const& value) const override { return static_cast<int>(value); }
+    size_t from_int(int i) const override { return static_cast<size_t>(i); }
     ConfigurationSearchSpaceConverterInterface* clone() const override { return new LinearSearchSpaceConverter(*this); }
 };
 

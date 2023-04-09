@@ -50,7 +50,7 @@ template<class T> class ConfigurationPropertyBase : public ConfigurationProperty
   protected:
     ConfigurationPropertyBase(bool const& is_specified);
     void set_specified();
-    virtual List<SharedPointer<T>> values() const = 0;
+    virtual List<shared_ptr<T>> values() const = 0;
     virtual void local_set_single(int integer_value) = 0;
     virtual List<int> local_integer_values() const = 0;
   public:
@@ -75,7 +75,7 @@ class BooleanConfigurationProperty final : public ConfigurationPropertyBase<bool
     bool is_single() const override;
     bool is_metric(ConfigurationPropertyPath const& path) const override;
     bool is_configurable() const override;
-    SizeType cardinality() const override;
+    size_t cardinality() const override;
 
     ConfigurationPropertyInterface* clone() const override;
 
@@ -88,7 +88,7 @@ class BooleanConfigurationProperty final : public ConfigurationPropertyBase<bool
   protected:
     void local_set_single(int integer_value) override;
     List<int> local_integer_values() const override;
-    List<SharedPointer<bool>> values() const override;
+    List<shared_ptr<bool>> values() const override;
   private:
     bool _is_single;
     bool _value;
@@ -105,7 +105,7 @@ template<class T> class RangeConfigurationProperty final : public ConfigurationP
     bool is_single() const override;
     bool is_metric(ConfigurationPropertyPath const& path) const override;
     bool is_configurable() const override;
-    SizeType cardinality() const override;
+    size_t cardinality() const override;
 
     ConfigurationPropertyInterface* clone() const override;
 
@@ -120,11 +120,11 @@ template<class T> class RangeConfigurationProperty final : public ConfigurationP
   protected:
     void local_set_single(int integer_value) override;
     List<int> local_integer_values() const override;
-    List<SharedPointer<T>> values() const override;
+    List<shared_ptr<T>> values() const override;
   private:
     T _lower;
     T _upper;
-    SharedPointer<ConfigurationSearchSpaceConverterInterface<T>> const _converter;
+    shared_ptr<ConfigurationSearchSpaceConverterInterface<T>> const _converter;
 };
 
 //! \brief A property that specifies distinct values from an enum
@@ -137,7 +137,7 @@ public:
     bool is_single() const override;
     bool is_metric(ConfigurationPropertyPath const& path) const override;
     bool is_configurable() const override;
-    SizeType cardinality() const override;
+    size_t cardinality() const override;
 
     ConfigurationPropertyInterface* clone() const override;
 
@@ -150,7 +150,7 @@ public:
 protected:
     void local_set_single(int integer_value) override;
     List<int> local_integer_values() const override;
-    List<SharedPointer<T>> values() const override;
+    List<shared_ptr<T>> values() const override;
 private:
     Set<T> _values;
 };
@@ -166,7 +166,7 @@ public:
     bool is_single() const override;
     bool is_metric(ConfigurationPropertyPath const& path) const override;
     bool is_configurable() const override;
-    SizeType cardinality() const override;
+    size_t cardinality() const override;
 
     ConfigurationPropertyInterface* clone() const override;
 
@@ -180,7 +180,7 @@ public:
   protected:
     void local_set_single(int integer_value) override;
     List<int> local_integer_values() const override;
-    List<SharedPointer<T>> values() const override;
+    List<shared_ptr<T>> values() const override;
   private:
     List<T> _values;
 };
@@ -190,13 +190,13 @@ public:
 template<class T> class InterfaceListConfigurationProperty final : public ConfigurationPropertyBase<T> {
   public:
     InterfaceListConfigurationProperty();
-    InterfaceListConfigurationProperty(List<SharedPointer<T>> const& list);
+    InterfaceListConfigurationProperty(List<shared_ptr<T>> const& list);
     InterfaceListConfigurationProperty(T const& value);
 
     bool is_single() const override;
     bool is_metric(ConfigurationPropertyPath const& path) const override;
     bool is_configurable() const override;
-    SizeType cardinality() const override;
+    size_t cardinality() const override;
 
     ConfigurationPropertyInterface* clone() const override;
 
@@ -205,15 +205,15 @@ template<class T> class InterfaceListConfigurationProperty final : public Config
     T const& get() const override;
     Map<ConfigurationPropertyPath,List<int>> integer_values() const override;
     void set(T const& value) override;
-    void set(SharedPointer<T> const& value);
-    void set(List<SharedPointer<T>> const& values);
+    void set(shared_ptr<T> const& value);
+    void set(List<shared_ptr<T>> const& values);
     void set_single(ConfigurationPropertyPath const& path, int integer_value) override;
   protected:
     void local_set_single(int integer_value) override;
     List<int> local_integer_values() const override;
-    List<SharedPointer<T>> values() const override;
+    List<shared_ptr<T>> values() const override;
   private:
-    List<SharedPointer<T>> _values;
+    List<shared_ptr<T>> _values;
 };
 
 } // namespace ProNest

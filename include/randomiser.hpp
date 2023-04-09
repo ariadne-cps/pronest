@@ -36,7 +36,8 @@
 
 #include <cstdlib>
 #include <time.h>
-#include "declarations.hpp"
+
+using namespace std;
 
 namespace ProNest {
 
@@ -45,14 +46,14 @@ template<class T> struct Randomiser;
 template<> struct Randomiser<double> {
     //! \get Return a value between 0 and \a value
     static double get(double min, double max) {
-        return ((max-min)*rand()/RAND_MAX + min);
+        return ((max-min)*static_cast<size_t>(rand())/RAND_MAX + min);
     }
 };
 
-template<> struct Randomiser<SizeType> {
+template<> struct Randomiser<size_t> {
     //! \get Return a value between 0 and \a value
-    static SizeType get(SizeType const& min, SizeType const& max) {
-        return SizeType(min + rand() % (max-min+1));
+    static size_t get(size_t const& min, size_t const& max) {
+        return size_t(min + static_cast<size_t>(rand()) % (max-min+1));
     }
 };
 
