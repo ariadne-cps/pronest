@@ -32,15 +32,15 @@
 
 namespace ProNest {
 
-template<class T> using shared_ptr = std::shared_ptr<T>;
+using Utility::Pair;
 
 SearchableConfiguration::SearchableConfiguration(SearchableConfiguration const& c) {
-    for (auto p : c.properties()) _properties.insert(Pair<String,shared_ptr<ConfigurationPropertyInterface>>(p.first,shared_ptr<ConfigurationPropertyInterface>(p.second->clone())));
+    for (auto const& p : c.properties()) _properties.insert(Pair<String,shared_ptr<ConfigurationPropertyInterface>>(p.first,shared_ptr<ConfigurationPropertyInterface>(p.second->clone())));
 }
 
 SearchableConfiguration& SearchableConfiguration::operator=(SearchableConfiguration const& c) {
     _properties.clear();
-    for (auto p : c.properties()) _properties.insert(Pair<String,shared_ptr<ConfigurationPropertyInterface>>(p.first,shared_ptr<ConfigurationPropertyInterface>(p.second->clone())));
+    for (auto const& p : c.properties()) _properties.insert(Pair<String,shared_ptr<ConfigurationPropertyInterface>>(p.first,shared_ptr<ConfigurationPropertyInterface>(p.second->clone())));
     return *this;
 }
 
@@ -56,7 +56,7 @@ void SearchableConfiguration::add_property(String const& name, ConfigurationProp
     _properties.insert(Pair<String,shared_ptr<ConfigurationPropertyInterface>>({name,shared_ptr<ConfigurationPropertyInterface>(property.clone())}));
 }
 
-OutputStream& SearchableConfiguration::_write(OutputStream& os) const {
+ostream& SearchableConfiguration::_write(ostream& os) const {
     os << "(\n";
     auto iter = _properties.begin(); size_t i=0;
     while (i<_properties.size()-1) {
@@ -67,18 +67,18 @@ OutputStream& SearchableConfiguration::_write(OutputStream& os) const {
 }
 
 bool SearchableConfiguration::is_singleton() const {
-    for (auto p : _properties) {
+    for (auto const& p : _properties) {
         auto int_values = p.second->integer_values();
-        for (auto p_int : int_values) if (p_int.second.size() > 1) return false;
+        for (auto const& p_int : int_values) if (p_int.second.size() > 1) return false;
     }
     return true;
 }
 
 ConfigurationSearchSpace SearchableConfiguration::search_space() const {
     Set<ConfigurationSearchParameter> result;
-    for (auto p : _properties) {
+    for (auto const& p : _properties) {
         auto integer_values = p.second->integer_values();
-        for (auto p_int : integer_values) {
+        for (auto const& p_int : integer_values) {
             if (p_int.second.size() > 1) {
                 ConfigurationPropertyPath path(p_int.first);
                 path.prepend(p.first);

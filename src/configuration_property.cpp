@@ -27,7 +27,6 @@
  */
 
 #include <ostream>
-#include "utility/writable.hpp"
 #include "utility/macros.hpp"
 #include "configuration_property.hpp"
 #include "configuration_property.tpl.hpp"

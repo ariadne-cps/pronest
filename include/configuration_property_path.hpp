@@ -37,9 +37,9 @@
 #include <deque>
 #include "utility/string.hpp"
 
-using namespace Utility;
-
 namespace ProNest {
+
+using Utility::String;
 
 class ConfigurationPropertyPath {
   public:

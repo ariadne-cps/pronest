@@ -37,9 +37,10 @@
 #include "utility/macros.hpp"
 #include "configuration_property_path.hpp"
 
-using namespace Utility;
-
 namespace ProNest {
+
+using std::ostream;
+using Utility::List;
 
 class ConfigurationSearchParameter {
   public:
@@ -57,7 +58,7 @@ class ConfigurationSearchParameter {
     bool operator==(ConfigurationSearchParameter const& p) const;
     bool operator<(ConfigurationSearchParameter const& p) const;
 
-    friend OutputStream& operator<<(OutputStream& os, ConfigurationSearchParameter const& parameter);
+    friend ostream& operator<<(ostream& os, ConfigurationSearchParameter const& parameter);
 
   private:
     const ConfigurationPropertyPath _path;

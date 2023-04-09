@@ -36,10 +36,11 @@
 #include <ostream>
 #include <type_traits>
 #include "utility/writable.hpp"
-
-using namespace Utility;
+#include "using.hpp"
 
 namespace ProNest {
+
+using Utility::WritableInterface;
 
 /*! \brief Configuration altering the model of a class.
  *
@@ -115,8 +116,8 @@ class ConfigurationInterface : public WritableInterface {
     const ConfigurationInterface& operator=(const ConfigurationInterface& other) = delete;
   public:
     virtual ~ConfigurationInterface() = default;
-    virtual OutputStream& _write(OutputStream& os) const = 0;
-    friend OutputStream& operator<<(OutputStream& os, const ConfigurationInterface& config) { return config._write(os); }
+    virtual ostream& _write(ostream& os) const = 0;
+    friend ostream& operator<<(ostream& os, const ConfigurationInterface& config) { return config._write(os); }
 };
 
 } // namespace ProNest

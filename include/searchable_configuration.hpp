@@ -40,8 +40,6 @@
 #include "configuration_property_interface.hpp"
 #include "configuration_property_path.hpp"
 
-using namespace Utility;
-
 namespace ProNest {
 
 class ConfigurationSearchSpace;
@@ -90,7 +88,7 @@ class SearchableConfiguration : public ConfigurationInterface {
     //! \brief Add a property to the configuration
     void add_property(String const& name, ConfigurationPropertyInterface const& property);
 
-    OutputStream& _write(OutputStream& os) const override;
+    ostream& _write(ostream& os) const override;
   private:
     Map<String,std::shared_ptr<ConfigurationPropertyInterface>> _properties;
 };

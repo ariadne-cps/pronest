@@ -30,9 +30,9 @@
 #include "configuration_search_point.hpp"
 #include "configuration_search_space.hpp"
 
-using namespace Utility;
-
 namespace ProNest {
+
+using Utility::Pair;
 
 ConfigurationSearchSpace::ConfigurationSearchSpace(Set<ConfigurationSearchParameter> const& parameters) {
     UTILITY_PRECONDITION(not parameters.empty());
@@ -43,19 +43,19 @@ ConfigurationSearchSpace::ConfigurationSearchSpace(Set<ConfigurationSearchParame
 ConfigurationSearchPoint ConfigurationSearchSpace::make_point(ParameterBindingsMap const& bindings) const {
     UTILITY_PRECONDITION(bindings.size() == this->dimension())
     ParameterBindingsMap pb;
-    for (auto p : _parameters) {
+    for (auto const& p : _parameters) {
         int v = bindings.find(p.path())->second;
         pb.insert(Pair<ConfigurationPropertyPath,int>(p.path(), v));
     }
-    return ConfigurationSearchPoint(*this, pb);
+    return {*this, pb};
 }
 
 ConfigurationSearchPoint ConfigurationSearchSpace::initial_point() const {
     ParameterBindingsMap pb;
-    for (auto p : _parameters) {
+    for (auto const& p : _parameters) {
         pb.insert(Pair<ConfigurationPropertyPath,int>(p.path(), p.random_value()));
     }
-    return ConfigurationSearchPoint(*this, pb);
+    return {*this, pb};
 }
 
 size_t ConfigurationSearchSpace::index(ConfigurationSearchParameter const& p) const {
@@ -69,7 +69,7 @@ size_t ConfigurationSearchSpace::index(ConfigurationPropertyPath const& path) co
 }
 
 ConfigurationSearchParameter const& ConfigurationSearchSpace::parameter(ConfigurationPropertyPath const& path) const {
-    for (size_t i=0; i<_parameters.size(); ++i) if (_parameters.at(i).path() == path) return _parameters.at(i);
+    for (auto const& p : _parameters) if (p.path() == path) return p;
     UTILITY_FAIL_MSG("Task parameter with path '" << path << "' not found in the space.");
 }
 
@@ -79,7 +79,7 @@ List<ConfigurationSearchParameter> const& ConfigurationSearchSpace::parameters()
 
 size_t ConfigurationSearchSpace::total_points() const {
     size_t result = 1;
-    for (auto p : _parameters) result *= p.values().size();
+    for (auto const& p : _parameters) result *= p.values().size();
     return result;
 }
 
@@ -91,7 +91,7 @@ ConfigurationSearchSpace* ConfigurationSearchSpace::clone() const {
     return new ConfigurationSearchSpace(*this);
 }
 
-OutputStream& operator<<(OutputStream& os, ConfigurationSearchSpace const& space) {
+ostream& operator<<(ostream& os, ConfigurationSearchSpace const& space) {
     os << "[";
     for (size_t i=0; i<space._parameters.size()-1; ++i) os << space._parameters[i] << ",";
     os << space._parameters[space._parameters.size()-1] << "]";

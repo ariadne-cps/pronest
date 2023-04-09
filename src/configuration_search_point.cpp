@@ -29,8 +29,6 @@
 #include "configuration_search_point.hpp"
 #include "configuration_search_space.hpp"
 
-using namespace Utility;
-
 namespace ProNest {
 
 ConfigurationSearchPoint::ConfigurationSearchPoint(ConfigurationSearchSpace const& space, ParameterBindingsMap const& bindings)
@@ -163,7 +161,7 @@ unsigned int ConfigurationSearchPoint::distance(ConfigurationSearchPoint const& 
     return result;
 }
 
-OutputStream& operator<<(OutputStream& os, ConfigurationSearchPoint const& point) {
+ostream& operator<<(ostream& os, ConfigurationSearchPoint const& point) {
     return os << point._bindings.values();
 }
 

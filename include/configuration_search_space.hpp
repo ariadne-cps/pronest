@@ -33,9 +33,14 @@
 #ifndef PRONEST_CONFIGURATION_SEARCH_SPACE_HPP
 #define PRONEST_CONFIGURATION_SEARCH_SPACE_HPP
 
+#include "utility/container.hpp"
 #include "configuration_search_parameter.hpp"
 
 namespace ProNest {
+
+using Utility::Map;
+using Utility::Set;
+using std::ostream;
 
 class ConfigurationSearchPoint;
 class Real;
@@ -65,7 +70,7 @@ class ConfigurationSearchSpace {
 
     ConfigurationSearchSpace* clone() const;
 
-    friend OutputStream& operator<<(OutputStream& os, ConfigurationSearchSpace const& space);
+    friend ostream& operator<<(ostream& os, ConfigurationSearchSpace const& space);
 
   private:
     List<ConfigurationSearchParameter> _parameters;

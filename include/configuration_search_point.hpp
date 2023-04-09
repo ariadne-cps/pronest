@@ -37,9 +37,9 @@
 #include "configuration_search_space.hpp"
 #include "configurable.hpp"
 
-using namespace Utility;
-
 namespace ProNest {
+
+using Utility::List;
 
 using ParameterBindingsMap = Map<ConfigurationPropertyPath,int>;
 
@@ -87,7 +87,7 @@ class ConfigurationSearchPoint {
     //! \brief Compute the breadth of possible shifts of the point for each parameter
     List<unsigned int> shift_breadths() const;
 
-    friend OutputStream& operator<<(OutputStream& os, ConfigurationSearchPoint const& point);
+    friend ostream& operator<<(ostream& os, ConfigurationSearchPoint const& point);
   private:
 
     std::shared_ptr<ConfigurationSearchSpace> _space;
@@ -108,7 +108,7 @@ Set<ConfigurationSearchPoint> make_extended_set_by_shifting(Set<ConfigurationSea
 template<class C> Configuration<C> make_singleton(Configuration<C> const& cfg, ConfigurationSearchPoint const& p) {
     UTILITY_PRECONDITION(not cfg.is_singleton());
     Configuration<C> result = cfg;
-    for (auto param : p.space().parameters()) {
+    for (auto const& param : p.space().parameters()) {
         auto prop_ptr = result.properties().find(param.path().first());
         UTILITY_ASSERT_MSG(prop_ptr != cfg.properties().end(), "The ConfigurationSearchPoint parameter '" << param.path() << "' is not in the configuration.");
         prop_ptr->second->set_single(param.path().subpath(),p.value(param.path()));

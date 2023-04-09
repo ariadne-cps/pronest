@@ -1,12 +1,12 @@
 /***************************************************************************
- *            randomiser.hpp
+ *            using.hpp
  *
  *  Copyright  2023  Luca Geretti
  *
  ****************************************************************************/
 
 /*
- * This file is part of ProNest, under the MIT license.
+ * This file is part of BetterThreads, under the MIT license.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,42 +26,21 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*! \file randomiser.hpp
- *  \brief Generators of random numbers for a type.
- *  \details The values are generated uniformly in the provided interval.
+/*! \file using.hpp
+ *  \brief Header for common using directives.
  */
 
-#ifndef PRONEST_RANDOMISER_HPP
-#define PRONEST_RANDOMISER_HPP
+#ifndef PRONEST_USING_HPP
+#define PRONEST_USING_HPP
 
-#include <cstdlib>
-#include <ctime>
+#include <ostream>
+#include <memory>
 
 namespace ProNest {
 
-template<class T> struct Randomiser;
-
-template<> struct Randomiser<double> {
-    //! \get Return a value between 0 and \a value
-    static double get(double min, double max) {
-        return ((max-min)*static_cast<size_t>(rand())/RAND_MAX + min);
-    }
-};
-
-template<> struct Randomiser<size_t> {
-    //! \get Return a value between 0 and \a value
-    static size_t get(size_t const& min, size_t const& max) {
-        return size_t(min + static_cast<size_t>(rand()) % (max-min+1));
-    }
-};
+using std::ostream;
+using std::shared_ptr;
 
 } // namespace ProNest
 
-inline bool _init_randomiser() {
-    srand(static_cast<unsigned int>(time(nullptr)));
-    return true;
-}
-
-static const bool init_randomiser = _init_randomiser();
-
-#endif /* PRONEST_RANDOMISER_HPP */
+#endif // PRONEST_USING_HPP

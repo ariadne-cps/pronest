@@ -42,9 +42,11 @@
 #include "configuration_property_interface.hpp"
 #include "configuration_search_space_converter.hpp"
 
-using namespace Utility;
-
 namespace ProNest {
+
+using Utility::List;
+using Utility::Map;
+using Utility::Set;
 
 template<class T> class ConfigurationPropertyBase : public ConfigurationPropertyInterface {
   protected:
@@ -61,7 +63,7 @@ template<class T> class ConfigurationPropertyBase : public ConfigurationProperty
     Map<ConfigurationPropertyPath,List<int>> integer_values() const override;
 
     //! \brief Supplies the values from the property, empty if not specified, the lower/upper bounds if a range
-    OutputStream& _write(OutputStream& os) const override;
+    ostream& _write(ostream& os) const override;
   private:
     bool _is_specified;
 };

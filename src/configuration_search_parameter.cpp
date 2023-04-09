@@ -73,7 +73,7 @@ bool ConfigurationSearchParameter::operator<(ConfigurationSearchParameter const&
     return path() < p.path();
 }
 
-OutputStream& operator<<(OutputStream& os, ConfigurationSearchParameter const& p) {
+ostream& operator<<(ostream& os, ConfigurationSearchParameter const& p) {
     os << "{'" << p._path << "', is_metric=" << p._is_metric << ", values=";
     if (p._is_metric) os << "[" << p._values[0] << ":" << p._values[p._values.size()-1] << "]";
     else {

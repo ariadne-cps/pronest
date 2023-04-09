@@ -33,6 +33,7 @@
 
 using namespace std;
 using namespace ProNest;
+using namespace Utility;
 
 enum class LevelOptions { LOW, MEDIUM, HIGH };
 std::ostream& operator<<(std::ostream& os, const LevelOptions level) {
@@ -50,13 +51,13 @@ class TestInterface : public WritableInterface {
 };
 class A : public TestInterface {
   public:
-    OutputStream& _write(OutputStream& os) const override { return os << "A"; }
+    ostream& _write(ostream& os) const override { return os << "A"; }
     TestInterface* clone() const override { return new A(*this); }
 
 };
 class B : public TestInterface {
 public:
-    OutputStream& _write(OutputStream& os) const override { return os << "B"; }
+    ostream& _write(ostream& os) const override { return os << "B"; }
     TestInterface* clone() const override { return new B(*this); }
 };
 

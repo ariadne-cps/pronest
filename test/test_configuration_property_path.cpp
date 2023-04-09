@@ -27,7 +27,6 @@
  */
 
 #include "utility/test.hpp"
-#include "utility/macros.hpp"
 #include "configuration_property_path.hpp"
 
 using namespace ProNest;

@@ -41,7 +41,9 @@
 
 namespace ProNest {
 
-using std::min, std::max;
+using std::min;
+using std::max;
+using Utility::Pair;
 
 inline bool possibly(bool value) { return value; }
 
@@ -61,7 +63,7 @@ template<class T> Map<ConfigurationPropertyPath,List<int>> ConfigurationProperty
     return result;
 }
 
-template<class T> OutputStream& ConfigurationPropertyBase<T>::_write(OutputStream& os) const {
+template<class T> ostream& ConfigurationPropertyBase<T>::_write(ostream& os) const {
     auto vals = values();
     if (vals.empty()) { os << "<unspecified>"; }
     else if (vals.size() == 1) { os << *vals[0]; }

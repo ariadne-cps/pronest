@@ -42,6 +42,8 @@
 #ifndef PRONEST_CONFIGURABLE_HPP
 #define PRONEST_CONFIGURABLE_HPP
 
+#include "using.hpp"
+
 namespace ProNest {
 
 class SearchableConfiguration;
@@ -66,7 +68,7 @@ template<class C> class Configurable : public ConfigurableInterface {
     Configuration<C> const& configuration() const;
     SearchableConfiguration const& searchable_configuration() const override;
   private:
-    std::shared_ptr<Configuration<C>> _configuration;
+    shared_ptr<Configuration<C>> _configuration;
 };
 
 } // namespace ProNest

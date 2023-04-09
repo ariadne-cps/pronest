@@ -36,9 +36,10 @@
 #include "utility/writable.hpp"
 #include "utility/container.hpp"
 
-using namespace Utility;
-
 namespace ProNest {
+
+using Utility::List;
+using Utility::Map;
 
 class ConfigurationPropertyPath;
 
