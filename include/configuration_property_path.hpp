@@ -35,7 +35,9 @@
 
 #include <utility>
 #include <deque>
-#include "declarations.hpp"
+#include "utility/string.hpp"
+
+using namespace Utility;
 
 namespace ProNest {
 
@@ -60,7 +62,7 @@ class ConfigurationPropertyPath {
     //! \brief Return everything but the first level of the path
     ConfigurationPropertyPath subpath() const;
 
-    friend OutputStream& operator<<(OutputStream& os, ConfigurationPropertyPath const& path);
+    friend std::ostream& operator<<(std::ostream& os, ConfigurationPropertyPath const& path);
   private:
     std::deque<String> _path;
 };

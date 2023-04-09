@@ -36,7 +36,6 @@
 #include <cstdint>
 #include <iosfwd>
 #include <type_traits>
-#include <string>
 #include <ostream>
 
 namespace ProNest {
