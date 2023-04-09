@@ -47,6 +47,7 @@ namespace ProNest {
 using Utility::List;
 using Utility::Map;
 using Utility::Set;
+using std::shared_ptr;
 
 template<class T> class ConfigurationPropertyBase : public ConfigurationPropertyInterface {
   protected:
