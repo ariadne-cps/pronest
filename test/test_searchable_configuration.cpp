@@ -74,7 +74,7 @@ public:
     TestConfigurable(String value, Configuration<TestConfigurable> const& configuration) : TestConfigurable(configuration) { _value = value; }
     TestConfigurable(Configuration<TestConfigurable> const& configuration) : Configurable<TestConfigurable>(configuration) { }
     void set_value(String value) override { _value = value; }
-    OutputStream& _write(OutputStream& os) const override { os << "TestConfigurable(value="<<_value<<",configuration=" << configuration() <<")"; return os; }
+    ostream& _write(ostream& os) const override { os << "TestConfigurable(value="<<_value<<",configuration=" << configuration() <<")"; return os; }
     TestConfigurableInterface* clone() const override { auto cfg = configuration(); return new TestConfigurable(_value,cfg); }
 private:
     String _value;
@@ -124,7 +124,7 @@ template<> struct Configuration<A> : public SearchableConfiguration {
 class A : public Configurable<A>, public WritableInterface {
   public:
     A() : Configurable<A>(Configuration<A>()) { }
-    OutputStream& _write(OutputStream& os) const override { os << "configuration:" << configuration(); return os; }
+    ostream& _write(ostream& os) const override { os << "configuration:" << configuration(); return os; }
 };
 
 class TestConfiguration {

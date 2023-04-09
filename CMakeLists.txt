@@ -95,4 +95,7 @@ if(NOT TARGET pronest)
         add_subdirectory(test)
     endif()
 
+    add_subdirectory(submodules)
+    target_link_libraries(pronest utility)
+
 endif()
