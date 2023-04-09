@@ -32,7 +32,7 @@ namespace ProNest {
 
 ConfigurationSearchParameter::ConfigurationSearchParameter(ConfigurationPropertyPath const& path, bool is_metric, List<int> const& values) :
     _path(path), _is_metric(is_metric), _values(values) {
-    PRONEST_PRECONDITION(values.size()>1);
+    UTILITY_PRECONDITION(values.size()>1);
 }
 
 ConfigurationPropertyPath const& ConfigurationSearchParameter::path() const {

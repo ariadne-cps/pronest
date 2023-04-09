@@ -37,6 +37,8 @@
 #include "configuration_search_space.hpp"
 #include "configurable.hpp"
 
+using namespace Utility;
+
 namespace ProNest {
 
 using ParameterBindingsMap = Map<ConfigurationPropertyPath,int>;
@@ -88,7 +90,7 @@ class ConfigurationSearchPoint {
     friend OutputStream& operator<<(OutputStream& os, ConfigurationSearchPoint const& point);
   private:
 
-    SharedPointer<ConfigurationSearchSpace> _space;
+    std::shared_ptr<ConfigurationSearchSpace> _space;
     ParameterBindingsMap _bindings;
 
     mutable List<Nat> _CACHED_SHIFT_BREADTHS;
@@ -104,14 +106,14 @@ Set<ConfigurationSearchPoint> make_extended_set_by_shifting(Set<ConfigurationSea
 
 //! \brief Make a configuration from another configuration \a cfg and a point \a p in the search space
 template<class C> Configuration<C> make_singleton(Configuration<C> const& cfg, ConfigurationSearchPoint const& p) {
-    PRONEST_PRECONDITION(not cfg.is_singleton());
+    UTILITY_PRECONDITION(not cfg.is_singleton());
     Configuration<C> result = cfg;
     for (auto param : p.space().parameters()) {
         auto prop_ptr = result.properties().find(param.path().first());
-        PRONEST_ASSERT_MSG(prop_ptr != cfg.properties().end(), "The ConfigurationSearchPoint parameter '" << param.path() << "' is not in the configuration.");
+        UTILITY_ASSERT_MSG(prop_ptr != cfg.properties().end(), "The ConfigurationSearchPoint parameter '" << param.path() << "' is not in the configuration.");
         prop_ptr->second->set_single(param.path().subpath(),p.value(param.path()));
     }
-    PRONEST_ASSERT_MSG(result.is_singleton(),"There are missing parameters in the search point, since the configuration could not be made singleton.");
+    UTILITY_ASSERT_MSG(result.is_singleton(),"There are missing parameters in the search point, since the configuration could not be made singleton.");
     return result;
 }
 

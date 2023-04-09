@@ -35,11 +35,14 @@
 
 #include <ostream>
 #include <type_traits>
-#include "macros.hpp"
-#include "container.hpp"
+#include "utility/macros.hpp"
+#include "utility/container.hpp"
+#include "utility/handle.hpp"
 #include "configuration_interface.hpp"
 #include "configuration_property_interface.hpp"
 #include "configuration_search_space_converter.hpp"
+
+using namespace Utility;
 
 namespace ProNest {
 

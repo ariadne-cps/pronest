@@ -35,10 +35,12 @@
 
 #include <ostream>
 #include <type_traits>
-#include "macros.hpp"
+#include "utility/macros.hpp"
 #include "configuration_interface.hpp"
 #include "configuration_property_interface.hpp"
 #include "configuration_property_path.hpp"
+
+using namespace Utility;
 
 namespace ProNest {
 
@@ -58,23 +60,23 @@ class SearchableConfiguration : public ConfigurationInterface {
     //! \brief If the configuration is made of single values
     bool is_singleton() const;
 
-    Map<String,SharedPointer<ConfigurationPropertyInterface>>& properties();
-    Map<String,SharedPointer<ConfigurationPropertyInterface>> const& properties() const;
+    Map<String,std::shared_ptr<ConfigurationPropertyInterface>>& properties();
+    Map<String,std::shared_ptr<ConfigurationPropertyInterface>> const& properties() const;
 
     //! \brief Accessors for get and set of a property identified by a path \a path with type \a P
     //! \details Used in practice to get/set properties for verification
     template<class P> P& at(ConfigurationPropertyPath const& path) {
         auto prop_ptr = _properties.find(path.first());
-        PRONEST_ASSERT_MSG(prop_ptr != _properties.end(),"The property '" << path.first() << "' was not found in the configuration.");
+        UTILITY_ASSERT_MSG(prop_ptr != _properties.end(),"The property '" << path.first() << "' was not found in the configuration.");
         auto p_ptr = dynamic_cast<P*>(prop_ptr->second->at(path.subpath()));
-        PRONEST_ASSERT_MSG(p_ptr != nullptr, "Invalid property cast, check the property class with respect to the configuration created.")
+        UTILITY_ASSERT_MSG(p_ptr != nullptr, "Invalid property cast, check the property class with respect to the configuration created.")
         return *p_ptr;
     }
     template<class P> P const& at(ConfigurationPropertyPath const& path) const {
         auto prop_ptr = _properties.find(path.first());
-        PRONEST_ASSERT_MSG(prop_ptr != _properties.end(),"The property '" << path.first() << "' was not found in the configuration.");
+        UTILITY_ASSERT_MSG(prop_ptr != _properties.end(),"The property '" << path.first() << "' was not found in the configuration.");
         auto p_ptr = dynamic_cast<P*>(prop_ptr->second->at(path.subpath()));
-        PRONEST_ASSERT_MSG(p_ptr != nullptr, "Invalid property cast, check the property class with respect to the configuration created.")
+        UTILITY_ASSERT_MSG(p_ptr != nullptr, "Invalid property cast, check the property class with respect to the configuration created.")
         return *p_ptr;
     }
     //! \brief Easier accessors for get and set starting from an \a identifier, to be used for Configuration class accessors
@@ -90,7 +92,7 @@ class SearchableConfiguration : public ConfigurationInterface {
 
     OutputStream& _write(OutputStream& os) const override;
   private:
-    Map<String,SharedPointer<ConfigurationPropertyInterface>> _properties;
+    Map<String,std::shared_ptr<ConfigurationPropertyInterface>> _properties;
 };
 
 } // namespace ProNest

@@ -68,7 +68,7 @@ template<class C> class Configurable : public ConfigurableInterface {
     Configuration<C> const& configuration() const;
     SearchableConfiguration const& searchable_configuration() const override;
   private:
-    SharedPointer<Configuration<C>> _configuration;
+    std::shared_ptr<Configuration<C>> _configuration;
 };
 
 } // namespace ProNest

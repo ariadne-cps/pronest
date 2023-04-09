@@ -52,8 +52,6 @@ using Nat = unsigned int;
 //! \brief Internal name for standard size type, used for sizes of containers.
 using SizeType = std::size_t;
 
-//! \brief Internal name for standard shared pointer.
-template<class T> using SharedPointer = std::shared_ptr<T>;
 //! \brief Internal name for standard initializer list.
 template<class T> using InitializerList = std::initializer_list<T>;
 //! \brief Internal name for standard pair.

@@ -26,14 +26,15 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include "utility/test.hpp"
 #include "searchable_configuration.hpp"
 #include "configuration_property.tpl.hpp"
 #include "configuration_search_space.hpp"
 #include "configurable.tpl.hpp"
 #include "configuration_search_point.hpp"
-#include "test.hpp"
 
 using namespace ProNest;
+using namespace Utility;
 
 class A;
 
@@ -43,7 +44,7 @@ std::ostream& operator<<(std::ostream& os, const LevelOptions level) {
         case LevelOptions::LOW: os << "LOW"; return os;
         case LevelOptions::MEDIUM: os << "MEDIUM"; return os;
         case LevelOptions::HIGH: os << "HIGH"; return os;
-        default: PRONEST_FAIL_MSG("Unhandled LevelOptions value");
+        default: UTILITY_FAIL_MSG("Unhandled LevelOptions value");
     }
 }
 
@@ -130,73 +131,73 @@ class TestConfiguration {
 
     void test_configuration_construction() {
         Configuration<A> a;
-        PRONEST_TEST_PRINT(a);
+        UTILITY_TEST_PRINT(a);
         a.set_use_reconditioning(true);
-        PRONEST_TEST_ASSERT(a.use_reconditioning());
+        UTILITY_TEST_ASSERT(a.use_reconditioning());
         a.set_use_reconditioning(false);
-        PRONEST_TEST_ASSERT(not a.use_reconditioning());
+        UTILITY_TEST_ASSERT(not a.use_reconditioning());
     }
 
     void test_configuration_at() {
         Configuration<A> ca;
-        PRONEST_TEST_EQUALS(ca.level(),LevelOptions::LOW);
+        UTILITY_TEST_EQUALS(ca.level(),LevelOptions::LOW);
         ca.set_level(LevelOptions::MEDIUM);
-        PRONEST_TEST_EQUALS(ca.level(),LevelOptions::MEDIUM);
-        PRONEST_TEST_FAIL(ca.at<EnumConfigurationProperty<LevelOptions>>(ConfigurationPropertyPath("inexistent")));
+        UTILITY_TEST_EQUALS(ca.level(),LevelOptions::MEDIUM);
+        UTILITY_TEST_FAIL(ca.at<EnumConfigurationProperty<LevelOptions>>(ConfigurationPropertyPath("inexistent")));
         auto level_prop = ca.at<EnumConfigurationProperty<LevelOptions>>(ConfigurationPropertyPath("level"));
-        PRONEST_TEST_EQUALS(level_prop.get(),LevelOptions::MEDIUM);
+        UTILITY_TEST_EQUALS(level_prop.get(),LevelOptions::MEDIUM);
         ca.at<LevelOptionsConfigurationProperty>(ConfigurationPropertyPath("level")).set(LevelOptions::HIGH);
-        PRONEST_TEST_EQUALS(ca.level(),LevelOptions::HIGH);
+        UTILITY_TEST_EQUALS(ca.level(),LevelOptions::HIGH);
         auto use_something_prop = ca.at<BooleanConfigurationProperty>(ConfigurationPropertyPath("test_configurable").append("use_something"));
-        PRONEST_TEST_EQUALS(use_something_prop.get(),true);
+        UTILITY_TEST_EQUALS(use_something_prop.get(),true);
         ca.at<BooleanConfigurationProperty>(ConfigurationPropertyPath("test_configurable").append("use_something")).set(false);
         auto use_something_prop_again = ca.at<BooleanConfigurationProperty>(ConfigurationPropertyPath("test_configurable").append("use_something"));
-        PRONEST_TEST_EQUALS(use_something_prop_again.get(),false);
+        UTILITY_TEST_EQUALS(use_something_prop_again.get(),false);
     }
 
     void test_configuration_search_space() {
         Configuration<A> a;
-        PRONEST_TEST_FAIL(a.search_space());
+        UTILITY_TEST_FAIL(a.search_space());
         a.set_both_use_reconditioning();
         auto search_space = a.search_space();
-        PRONEST_TEST_EQUALS(search_space.dimension(),1);
+        UTILITY_TEST_EQUALS(search_space.dimension(),1);
     }
 
     void test_configuration_make_singleton() {
         Configuration<A> a;
         a.set_both_use_reconditioning();
         auto search_space = a.search_space();
-        PRONEST_TEST_PRINT(search_space);
+        UTILITY_TEST_PRINT(search_space);
         auto point = search_space.initial_point();
-        PRONEST_TEST_PRINT(point);
+        UTILITY_TEST_PRINT(point);
         bool use_reconditioning = (point.coordinates()[0] == 1 ? true : false);
-        PRONEST_TEST_PRINT(use_reconditioning);
+        UTILITY_TEST_PRINT(use_reconditioning);
         auto b = make_singleton(a,point);
-        PRONEST_TEST_ASSERT(not a.is_singleton());
-        PRONEST_TEST_ASSERT(b.is_singleton());
-        PRONEST_TEST_EQUALS(b.use_reconditioning(),use_reconditioning);
+        UTILITY_TEST_ASSERT(not a.is_singleton());
+        UTILITY_TEST_ASSERT(b.is_singleton());
+        UTILITY_TEST_EQUALS(b.use_reconditioning(),use_reconditioning);
 
         a.set_maximum_step_size(1e-3,1e-1);
         auto search_space2 = a.search_space();
-        PRONEST_TEST_PRINT(search_space2);
+        UTILITY_TEST_PRINT(search_space2);
         point = search_space2.initial_point();
-        PRONEST_TEST_PRINT(point);
+        UTILITY_TEST_PRINT(point);
         b = make_singleton(a,point);
-        PRONEST_TEST_ASSERT(not a.is_singleton());
-        PRONEST_TEST_ASSERT(b.is_singleton());
-        PRONEST_TEST_PRINT(b);
+        UTILITY_TEST_ASSERT(not a.is_singleton());
+        UTILITY_TEST_ASSERT(b.is_singleton());
+        UTILITY_TEST_PRINT(b);
 
         ConfigurationSearchParameter p1(ConfigurationPropertyPath("use_reconditioning"), false, List<int>({0, 1}));
         ConfigurationSearchParameter p2(ConfigurationPropertyPath("maximum_step_size"), true, List<int>({-3, -1}));
         ConfigurationSearchParameter p3(ConfigurationPropertyPath("sweep_threshold"), true, List<int>({-10, -8}));
         ConfigurationSearchSpace search_space3({p1, p2, p3});
-        PRONEST_TEST_FAIL(make_singleton(a,search_space3.initial_point()));
+        UTILITY_TEST_FAIL(make_singleton(a,search_space3.initial_point()));
         a.set_use_reconditioning(false);
         ConfigurationSearchSpace search_space4({p1, p2});
-        PRONEST_TEST_FAIL(make_singleton(a,search_space4.initial_point()));
+        UTILITY_TEST_FAIL(make_singleton(a,search_space4.initial_point()));
         a.set_both_use_reconditioning();
         ConfigurationSearchSpace search_space5({p1});
-        PRONEST_TEST_FAIL(make_singleton(a,search_space5.initial_point()))
+        UTILITY_TEST_FAIL(make_singleton(a,search_space5.initial_point()))
     }
 
     void test_configuration_hierarchic_search_space() {
@@ -207,9 +208,9 @@ class TestConfiguration {
         ca.set_test_configurable(tc);
         ca.set_both_use_reconditioning();
         auto search_space = ca.search_space();
-        PRONEST_TEST_PRINT(ca);
-        PRONEST_TEST_PRINT(search_space);
-        PRONEST_TEST_EQUALS(search_space.dimension(),2);
+        UTILITY_TEST_PRINT(ca);
+        UTILITY_TEST_PRINT(search_space);
+        UTILITY_TEST_EQUALS(search_space.dimension(),2);
     }
 
     void test_configuration_hierarchic_make_singleton() {
@@ -219,27 +220,27 @@ class TestConfiguration {
         TestConfigurable tc(ctc);
         ca.set_test_configurable(tc);
         ca.set_both_use_reconditioning();
-        PRONEST_TEST_PRINT(ca);
+        UTILITY_TEST_PRINT(ca);
         auto search_space = ca.search_space();
-        PRONEST_TEST_PRINT(search_space);
+        UTILITY_TEST_PRINT(search_space);
         auto point = search_space.initial_point();
-        PRONEST_TEST_PRINT(point);
+        UTILITY_TEST_PRINT(point);
         auto singleton = make_singleton(ca,point);
-        PRONEST_TEST_PRINT(singleton);
+        UTILITY_TEST_PRINT(singleton);
     }
 
     void test() {
-        PRONEST_TEST_CALL(test_configuration_construction());
-        PRONEST_TEST_CALL(test_configuration_at());
-        PRONEST_TEST_CALL(test_configuration_search_space());
-        PRONEST_TEST_CALL(test_configuration_make_singleton());
-        PRONEST_TEST_CALL(test_configuration_hierarchic_search_space());
-        PRONEST_TEST_CALL(test_configuration_hierarchic_make_singleton());
+        UTILITY_TEST_CALL(test_configuration_construction());
+        UTILITY_TEST_CALL(test_configuration_at());
+        UTILITY_TEST_CALL(test_configuration_search_space());
+        UTILITY_TEST_CALL(test_configuration_make_singleton());
+        UTILITY_TEST_CALL(test_configuration_hierarchic_search_space());
+        UTILITY_TEST_CALL(test_configuration_hierarchic_make_singleton());
     }
 };
 
 int main() {
 
     TestConfiguration().test();
-    return PRONEST_TEST_FAILURES;
+    return UTILITY_TEST_FAILURES;
 }

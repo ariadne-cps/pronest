@@ -35,7 +35,9 @@
 
 #include <ostream>
 #include <type_traits>
-#include "writable.hpp"
+#include "utility/writable.hpp"
+
+using namespace Utility;
 
 namespace ProNest {
 

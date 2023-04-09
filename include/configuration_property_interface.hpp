@@ -33,8 +33,8 @@
 #ifndef PRONEST_CONFIGURATION_PROPERTY_INTERFACE_HPP
 #define PRONEST_CONFIGURATION_PROPERTY_INTERFACE_HPP
 
-#include "writable.hpp"
-#include "container.hpp"
+#include "utility/writable.hpp"
+#include "utility/container.hpp"
 
 namespace ProNest {
 

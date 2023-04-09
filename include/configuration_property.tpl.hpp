@@ -31,7 +31,7 @@
 
 #include <ostream>
 #include <type_traits>
-#include "writable.hpp"
+#include "utility/writable.hpp"
 #include "randomiser.hpp"
 #include "configuration_interface.hpp"
 #include "configuration_property.hpp"
@@ -80,15 +80,15 @@ template<class T> RangeConfigurationProperty<T>::RangeConfigurationProperty(Conf
 template<class T> RangeConfigurationProperty<T>::RangeConfigurationProperty(T const& lower, T const& upper, ConfigurationSearchSpaceConverterInterface<T> const& converter) :
         ConfigurationPropertyBase<T>(true), _lower(lower), _upper(upper),
         _converter(SharedPointer<ConfigurationSearchSpaceConverterInterface<T>>(converter.clone())) {
-    PRONEST_PRECONDITION(not possibly(upper < lower));
+    UTILITY_PRECONDITION(not possibly(upper < lower));
 }
 
 template<class T> RangeConfigurationProperty<T>::RangeConfigurationProperty(T const& value, ConfigurationSearchSpaceConverterInterface<T> const& converter) :
                 RangeConfigurationProperty(value,value,converter) { }
 
 template<class T> T const& RangeConfigurationProperty<T>::get() const {
-    PRONEST_PRECONDITION(this->is_specified());
-    PRONEST_ASSERT_MSG(this->is_single(),"The property should have a single value when actually used. Are you accessing it outside the related task?");
+    UTILITY_PRECONDITION(this->is_specified());
+    UTILITY_ASSERT_MSG(this->is_single(),"The property should have a single value when actually used. Are you accessing it outside the related task?");
     return _upper;
 }
 
@@ -98,7 +98,7 @@ template<class T> bool RangeConfigurationProperty<T>::is_single() const {
 }
 
 template<class T> bool RangeConfigurationProperty<T>::is_metric(ConfigurationPropertyPath const& path) const {
-    PRONEST_PRECONDITION(path.is_root());
+    UTILITY_PRECONDITION(path.is_root());
     return true;
 }
 
@@ -117,8 +117,8 @@ template<class T> List<int> RangeConfigurationProperty<T>::local_integer_values(
     if (this->is_specified()) {
         int min_value = _converter->to_int(_lower);
         int max_value = _converter->to_int(_upper);
-        PRONEST_ASSERT_MSG(not(max_value == std::numeric_limits<int>::max() and min_value < std::numeric_limits<int>::max()),"An upper bounded range is required.");
-        PRONEST_ASSERT_MSG(not(min_value == std::numeric_limits<int>::min() and max_value > std::numeric_limits<int>::min()),"A lower bounded range is required.");
+        UTILITY_ASSERT_MSG(not(max_value == std::numeric_limits<int>::max() and min_value < std::numeric_limits<int>::max()),"An upper bounded range is required.");
+        UTILITY_ASSERT_MSG(not(min_value == std::numeric_limits<int>::min() and max_value > std::numeric_limits<int>::min()),"A lower bounded range is required.");
         if (min_value == max_value) result.push_back(min_value); // Necessary to address the +inf case
         else for (int i = min_value; i <= max_value; ++i) result.push_back(i);
     }
@@ -126,15 +126,15 @@ template<class T> List<int> RangeConfigurationProperty<T>::local_integer_values(
 }
 
 template<class T> void RangeConfigurationProperty<T>::set_single(ConfigurationPropertyPath const& path, int integer_value) {
-    PRONEST_PRECONDITION(path.is_root());
+    UTILITY_PRECONDITION(path.is_root());
     local_set_single(integer_value);
 }
 
 template<class T> void RangeConfigurationProperty<T>::local_set_single(int integer_value) {
     int min_value = _converter->to_int(_lower);
     int max_value = _converter->to_int(_upper);
-    PRONEST_PRECONDITION(not is_single());
-    PRONEST_PRECONDITION(integer_value >= min_value and integer_value <= max_value);
+    UTILITY_PRECONDITION(not is_single());
+    UTILITY_PRECONDITION(integer_value >= min_value and integer_value <= max_value);
     if (integer_value == min_value) _upper = _lower; // Avoids rounding error
     else if (integer_value == max_value) _lower = _upper; // Avoids rounding error
     else { _lower = _upper = _converter->from_int(integer_value); }
@@ -145,12 +145,12 @@ template<class T> ConfigurationPropertyInterface* RangeConfigurationProperty<T>:
 }
 
 template<class T> ConfigurationPropertyInterface* RangeConfigurationProperty<T>::at(ConfigurationPropertyPath const& path) {
-    PRONEST_ASSERT_MSG(path.is_root(),"The path " << path << " is not a root but a range property can't have configurable objects below.");
+    UTILITY_ASSERT_MSG(path.is_root(),"The path " << path << " is not a root but a range property can't have configurable objects below.");
     return this;
 }
 
 template<class T> void RangeConfigurationProperty<T>::set(T const& lower, T const& upper) {
-    PRONEST_PRECONDITION(not possibly(upper < lower));
+    UTILITY_PRECONDITION(not possibly(upper < lower));
     this->set_specified();
     _lower = lower;
     _upper = upper;
@@ -173,18 +173,18 @@ template<class T> List<SharedPointer<T>> RangeConfigurationProperty<T>::values()
 
 template<class T> EnumConfigurationProperty<T>::EnumConfigurationProperty()
         : ConfigurationPropertyBase<T>(false) {
-    PRONEST_PRECONDITION(std::is_enum<T>::value);
+    UTILITY_PRECONDITION(std::is_enum<T>::value);
 }
 
 template<class T> EnumConfigurationProperty<T>::EnumConfigurationProperty(Set<T> const& values)
         : ConfigurationPropertyBase<T>(true), _values(values) {
-    PRONEST_PRECONDITION(std::is_enum<T>::value);
-    PRONEST_PRECONDITION(values.size()>0);
+    UTILITY_PRECONDITION(std::is_enum<T>::value);
+    UTILITY_PRECONDITION(values.size()>0);
 }
 
 template<class T> EnumConfigurationProperty<T>::EnumConfigurationProperty(T const& value)
         : ConfigurationPropertyBase<T>(true) {
-    PRONEST_PRECONDITION(std::is_enum<T>::value);
+    UTILITY_PRECONDITION(std::is_enum<T>::value);
     _values.insert(value);
 }
 
@@ -193,7 +193,7 @@ template<class T> bool EnumConfigurationProperty<T>::is_single() const {
 }
 
 template<class T> bool EnumConfigurationProperty<T>::is_metric(ConfigurationPropertyPath const& path) const {
-    PRONEST_PRECONDITION(path.is_root());
+    UTILITY_PRECONDITION(path.is_root());
     return false;
 }
 
@@ -213,13 +213,13 @@ template<class T> List<int> EnumConfigurationProperty<T>::local_integer_values()
 
 
 template<class T> void EnumConfigurationProperty<T>::set_single(ConfigurationPropertyPath const& path, int integer_value) {
-    PRONEST_PRECONDITION(path.is_root());
+    UTILITY_PRECONDITION(path.is_root());
     local_set_single(integer_value);
 }
 
 template<class T> void EnumConfigurationProperty<T>::local_set_single(int integer_value) {
-    PRONEST_PRECONDITION(not is_single());
-    PRONEST_PRECONDITION(integer_value >= 0 and integer_value < (int)cardinality());
+    UTILITY_PRECONDITION(not is_single());
+    UTILITY_PRECONDITION(integer_value >= 0 and integer_value < (int)cardinality());
     auto iter = _values.begin();
     for (SizeType i=0;i<(SizeType)integer_value;++i) ++iter;
     T value = *iter;
@@ -232,13 +232,13 @@ template<class T> ConfigurationPropertyInterface* EnumConfigurationProperty<T>::
 }
 
 template<class T> ConfigurationPropertyInterface* EnumConfigurationProperty<T>::at(ConfigurationPropertyPath const& path) {
-    PRONEST_ASSERT_MSG(path.is_root(),"The path " << path << " is not a root but an enum property can't have configurable objects below.");
+    UTILITY_ASSERT_MSG(path.is_root(),"The path " << path << " is not a root but an enum property can't have configurable objects below.");
     return this;
 }
 
 template<class T> T const& EnumConfigurationProperty<T>::get() const {
-    PRONEST_PRECONDITION(this->is_specified());
-    PRONEST_ASSERT_MSG(this->is_single(),"The property should have a single value when actually used. Are you accessing it outside the related task?");
+    UTILITY_PRECONDITION(this->is_specified());
+    UTILITY_ASSERT_MSG(this->is_single(),"The property should have a single value when actually used. Are you accessing it outside the related task?");
     return *_values.begin();
 }
 
@@ -249,7 +249,7 @@ template<class T> void EnumConfigurationProperty<T>::set(T const& value) {
 }
 
 template<class T> void EnumConfigurationProperty<T>::set(Set<T> const& values) {
-    PRONEST_PRECONDITION(not values.empty());
+    UTILITY_PRECONDITION(not values.empty());
     this->set_specified();
     _values = values;
 }
@@ -266,7 +266,7 @@ template<class T> HandleListConfigurationProperty<T>::HandleListConfigurationPro
 
 template<class T> HandleListConfigurationProperty<T>::HandleListConfigurationProperty(List<T> const& values)
     : ConfigurationPropertyBase<T>(true), _values(values) {
-        PRONEST_PRECONDITION(values.size()>0);
+        UTILITY_PRECONDITION(values.size()>0);
 }
 
 template<class T> HandleListConfigurationProperty<T>::HandleListConfigurationProperty(T const& value)
@@ -281,22 +281,22 @@ template<class T> bool HandleListConfigurationProperty<T>::is_single() const {
 template<class T> bool HandleListConfigurationProperty<T>::is_metric(ConfigurationPropertyPath const& path) const {
     if (path.is_root()) return false;
     if (is_configurable()) {
-        PRONEST_PRECONDITION(is_single());
+        UTILITY_PRECONDITION(is_single());
         auto properties = dynamic_cast<const ConfigurableInterface*>(_values.at(0).const_pointer())->searchable_configuration().properties();
         auto p_ptr = properties.find(path.first());
         if (p_ptr != properties.end()) {
             return p_ptr->second->is_metric(path.subpath());
         } else {
-            PRONEST_FAIL_MSG("A property for " << path << " has not been found.");
+            UTILITY_FAIL_MSG("A property for " << path << " has not been found.");
         }
     } else {
-        PRONEST_FAIL_MSG("The object is not configurable, a property for " << path << " could not been found.");
+        UTILITY_FAIL_MSG("The object is not configurable, a property for " << path << " could not been found.");
     }
 }
 
 template<class T> bool HandleListConfigurationProperty<T>::is_configurable() const {
-    PRONEST_ASSERT_MSG(this->is_specified(),"Cannot check if configurable if the property is not specified.");
-    PRONEST_PRECONDITION(is_single());
+    UTILITY_ASSERT_MSG(this->is_specified(),"Cannot check if configurable if the property is not specified.");
+    UTILITY_PRECONDITION(is_single());
     auto const configurable_interface_ptr = dynamic_cast<const ConfigurableInterface*>(_values.at(0).const_pointer());
     return (configurable_interface_ptr != nullptr);
 }
@@ -312,8 +312,8 @@ template<class T> List<int> HandleListConfigurationProperty<T>::local_integer_va
 }
 
 template<class T> void HandleListConfigurationProperty<T>::local_set_single(int integer_value) {
-    PRONEST_PRECONDITION(not is_single());
-    PRONEST_PRECONDITION(integer_value >= 0 and integer_value < (int)cardinality());
+    UTILITY_PRECONDITION(not is_single());
+    UTILITY_PRECONDITION(integer_value >= 0 and integer_value < (int)cardinality());
     T value = _values[(SizeType)integer_value];
     _values.clear();
     _values.push_back(value);
@@ -333,7 +333,7 @@ template<class T> void HandleListConfigurationProperty<T>::set_single(Configurat
                 been_set = true;
             }
         }
-        PRONEST_ASSERT_MSG(been_set,"A property for " << path << " has not been found.");
+        UTILITY_ASSERT_MSG(been_set,"A property for " << path << " has not been found.");
     }
 }
 
@@ -362,20 +362,20 @@ template<class T> ConfigurationPropertyInterface* HandleListConfigurationPropert
 template<class T> ConfigurationPropertyInterface* HandleListConfigurationProperty<T>::at(ConfigurationPropertyPath const& path) {
     if (path.is_root()) return this;
     else {
-        PRONEST_ASSERT_MSG(is_configurable(),"The object held is not configurable, path error.");
-        PRONEST_ASSERT_MSG(is_single(),"Cannot retrieve properties if the list has multiple objects.");
+        UTILITY_ASSERT_MSG(is_configurable(),"The object held is not configurable, path error.");
+        UTILITY_ASSERT_MSG(is_single(),"Cannot retrieve properties if the list has multiple objects.");
         auto configurable_ptr = dynamic_cast<ConfigurableInterface*>(_values.at(0).pointer());
         auto properties = configurable_ptr->searchable_configuration().properties();
         auto prop_ptr = properties.find(path.first());
-        PRONEST_ASSERT_MSG(prop_ptr != properties.end(),"The property '" << path.first() << "' was not found in the configuration.");
+        UTILITY_ASSERT_MSG(prop_ptr != properties.end(),"The property '" << path.first() << "' was not found in the configuration.");
         return prop_ptr->second->at(path.subpath());
     }
     return this;
 }
 
 template<class T> T const& HandleListConfigurationProperty<T>::get() const {
-    PRONEST_PRECONDITION(this->is_specified());
-    PRONEST_ASSERT_MSG(this->is_single(),"The property should have a single value when actually used. Are you accessing it outside the related task?");
+    UTILITY_PRECONDITION(this->is_specified());
+    UTILITY_ASSERT_MSG(this->is_single(),"The property should have a single value when actually used. Are you accessing it outside the related task?");
     return _values.back();
 }
 
@@ -386,7 +386,7 @@ template<class T> void HandleListConfigurationProperty<T>::set(T const& value) {
 }
 
 template<class T> void HandleListConfigurationProperty<T>::set(List<T> const& values) {
-    PRONEST_PRECONDITION(not values.empty());
+    UTILITY_PRECONDITION(not values.empty());
     this->set_specified();
     _values = values;
 }
@@ -400,7 +400,7 @@ template<class T> List<SharedPointer<T>> HandleListConfigurationProperty<T>::val
 template<class T> InterfaceListConfigurationProperty<T>::InterfaceListConfigurationProperty() : ConfigurationPropertyBase<T>(false) { }
 
 template<class T> InterfaceListConfigurationProperty<T>::InterfaceListConfigurationProperty(List<SharedPointer<T>> const& list) : ConfigurationPropertyBase<T>(true), _values(list) {
-    PRONEST_PRECONDITION(list.size()>0);
+    UTILITY_PRECONDITION(list.size()>0);
 }
 
 template<class T> InterfaceListConfigurationProperty<T>::InterfaceListConfigurationProperty(T const& value) : ConfigurationPropertyBase<T>(true) {
@@ -414,22 +414,22 @@ template<class T> bool InterfaceListConfigurationProperty<T>::is_single() const 
 template<class T> bool InterfaceListConfigurationProperty<T>::is_metric(ConfigurationPropertyPath const& path) const {
     if (path.is_root()) return false;
     if (is_configurable()) {
-        PRONEST_PRECONDITION(is_single());
+        UTILITY_PRECONDITION(is_single());
         auto properties = dynamic_cast<ConfigurableInterface*>(_values.back().get())->searchable_configuration().properties();
         auto p_ptr = properties.find(path.first());
         if (p_ptr != properties.end()) {
             return p_ptr->second->is_metric(path.subpath());
         } else {
-            PRONEST_FAIL_MSG("A property for " << path << " has not been found.");
+            UTILITY_FAIL_MSG("A property for " << path << " has not been found.");
         }
     } else {
-        PRONEST_FAIL_MSG("The object is not configurable, a property for " << path << " could not been found.");
+        UTILITY_FAIL_MSG("The object is not configurable, a property for " << path << " could not been found.");
     }
 }
 
 template<class T> bool InterfaceListConfigurationProperty<T>::is_configurable() const {
-    PRONEST_ASSERT_MSG(this->is_specified(),"Cannot check if configurable if the property is not specified.");
-    PRONEST_PRECONDITION(is_single());
+    UTILITY_ASSERT_MSG(this->is_specified(),"Cannot check if configurable if the property is not specified.");
+    UTILITY_PRECONDITION(is_single());
     auto configurable_interface_ptr = dynamic_cast<ConfigurableInterface*>(_values.back().get());
     return (configurable_interface_ptr != nullptr);
 }
@@ -445,8 +445,8 @@ template<class T> List<int> InterfaceListConfigurationProperty<T>::local_integer
 }
 
 template<class T> void InterfaceListConfigurationProperty<T>::local_set_single(int integer_value) {
-    PRONEST_PRECONDITION(not is_single());
-    PRONEST_PRECONDITION(integer_value >= 0 and integer_value < (int)cardinality());
+    UTILITY_PRECONDITION(not is_single());
+    UTILITY_PRECONDITION(integer_value >= 0 and integer_value < (int)cardinality());
     SharedPointer<T> value = _values[(SizeType)integer_value];
     _values.clear();
     _values.push_back(value);
@@ -466,7 +466,7 @@ template<class T> void InterfaceListConfigurationProperty<T>::set_single(Configu
                 been_set = true;
             }
         }
-        PRONEST_ASSERT_MSG(been_set,"A property for " << path << " has not been found.");
+        UTILITY_ASSERT_MSG(been_set,"A property for " << path << " has not been found.");
     }
 }
 
@@ -497,19 +497,19 @@ template<class T> ConfigurationPropertyInterface* InterfaceListConfigurationProp
 template<class T> ConfigurationPropertyInterface* InterfaceListConfigurationProperty<T>::at(ConfigurationPropertyPath const& path) {
     if (path.is_root()) return this;
     else {
-        PRONEST_ASSERT_MSG(is_configurable(),"The object held is not configurable, path error.");
-        PRONEST_ASSERT_MSG(is_single(),"Cannot retrieve properties if the list has multiple objects.");
+        UTILITY_ASSERT_MSG(is_configurable(),"The object held is not configurable, path error.");
+        UTILITY_ASSERT_MSG(is_single(),"Cannot retrieve properties if the list has multiple objects.");
         auto configurable_ptr = dynamic_cast<ConfigurableInterface*>(_values.back().get());
         auto properties = configurable_ptr->searchable_configuration().properties();
         auto prop_ptr = properties.find(path.first());
-        PRONEST_ASSERT_MSG(prop_ptr != properties.end(),"The property '" << path.first() << "' was not found in the configuration.");
+        UTILITY_ASSERT_MSG(prop_ptr != properties.end(),"The property '" << path.first() << "' was not found in the configuration.");
         return prop_ptr->second->at(path.subpath());
     }
 }
 
 template<class T> T const& InterfaceListConfigurationProperty<T>::get() const {
-    PRONEST_PRECONDITION(this->is_specified());
-    PRONEST_ASSERT_MSG(this->is_single(),"The property should have a single value when actually used. Are you accessing it outside the related task?");
+    UTILITY_PRECONDITION(this->is_specified());
+    UTILITY_ASSERT_MSG(this->is_single(),"The property should have a single value when actually used. Are you accessing it outside the related task?");
     return *_values.back();
 }
 
@@ -520,14 +520,14 @@ template<class T> void InterfaceListConfigurationProperty<T>::set(T const& value
 }
 
 template<class T> void InterfaceListConfigurationProperty<T>::set(SharedPointer<T> const& value) {
-    PRONEST_PRECONDITION(value != nullptr);
+    UTILITY_PRECONDITION(value != nullptr);
     this->set_specified();
     _values.clear();
     _values.push_back(value);
 }
 
 template<class T> void InterfaceListConfigurationProperty<T>::set(List<SharedPointer<T>> const& values) {
-    PRONEST_PRECONDITION(values.size()>0);
+    UTILITY_PRECONDITION(values.size()>0);
     this->set_specified();
     _values = values;
 }

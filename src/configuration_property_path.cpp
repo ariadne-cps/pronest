@@ -26,7 +26,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "macros.hpp"
+#include "utility/macros.hpp"
 #include "configuration_property_path.hpp"
 
 namespace ProNest {
@@ -63,24 +63,24 @@ bool ConfigurationPropertyPath::is_root() const {
 }
 
 ConfigurationPropertyPath& ConfigurationPropertyPath::append(String const& node) {
-    PRONEST_PRECONDITION(not node.empty());
+    UTILITY_PRECONDITION(not node.empty());
     _path.push_back(node);
     return *this;
 }
 
 ConfigurationPropertyPath& ConfigurationPropertyPath::prepend(String const& node) {
-    PRONEST_PRECONDITION(not node.empty());
+    UTILITY_PRECONDITION(not node.empty());
     _path.push_front(node);
     return *this;
 }
 
 String ConfigurationPropertyPath::first() const {
-    PRONEST_PRECONDITION(not is_root());
+    UTILITY_PRECONDITION(not is_root());
     return _path.front();
 }
 
 String ConfigurationPropertyPath::last() const {
-    PRONEST_PRECONDITION(not is_root());
+    UTILITY_PRECONDITION(not is_root());
     return _path.back();
 }
 

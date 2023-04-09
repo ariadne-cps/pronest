@@ -29,6 +29,8 @@
 #include "configuration_search_point.hpp"
 #include "configuration_search_space.hpp"
 
+using namespace Utility;
+
 namespace ProNest {
 
 ConfigurationSearchPoint::ConfigurationSearchPoint(ConfigurationSearchSpace const& space, ParameterBindingsMap const& bindings)
@@ -78,7 +80,7 @@ ConfigurationSearchPoint ConfigurationSearchPoint::make_adjacent_shifted() const
     List<Nat> breadths = this->shift_breadths();
     Nat total_breadth = 0;
     for (auto b : breadths) total_breadth += b;
-    PRONEST_PRECONDITION(total_breadth != 0);
+    UTILITY_PRECONDITION(total_breadth != 0);
     Set<ConfigurationSearchPoint> result;
     auto space = this->space();
     Nat offset = (Nat)rand() % total_breadth;
@@ -181,8 +183,8 @@ List<Nat> ConfigurationSearchPoint::shift_breadths() const {
 }
 
 Set<ConfigurationSearchPoint> make_extended_set_by_shifting(Set<ConfigurationSearchPoint> const& sources, SizeType size) {
-    PRONEST_PRECONDITION(size>=sources.size());
-    PRONEST_PRECONDITION(sources.begin()->space().total_points() >= size);
+    UTILITY_PRECONDITION(size>=sources.size());
+    UTILITY_PRECONDITION(sources.begin()->space().total_points() >= size);
     auto expanded_sources = sources; // To be be expanded if the previous sources are incapable of getting the required size
     auto result = sources;
 

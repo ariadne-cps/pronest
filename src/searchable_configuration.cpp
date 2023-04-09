@@ -26,11 +26,13 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "container.hpp"
+#include "utility/container.hpp"
 #include "searchable_configuration.hpp"
 #include "configuration_search_space.hpp"
 
 namespace ProNest {
+
+template<class T> using SharedPointer = std::shared_ptr<T>;
 
 SearchableConfiguration::SearchableConfiguration(SearchableConfiguration const& c) {
     for (auto p : c.properties()) _properties.insert(Pair<String,SharedPointer<ConfigurationPropertyInterface>>(p.first,SharedPointer<ConfigurationPropertyInterface>(p.second->clone())));
@@ -84,7 +86,7 @@ ConfigurationSearchSpace SearchableConfiguration::search_space() const {
             }
         }
     }
-    PRONEST_ASSERT_MSG(not result.empty(),"The search space is empty.");
+    UTILITY_ASSERT_MSG(not result.empty(),"The search space is empty.");
     return result;
 }
 

@@ -30,16 +30,18 @@
 #include "configuration_search_point.hpp"
 #include "configuration_search_space.hpp"
 
+using namespace Utility;
+
 namespace ProNest {
 
 ConfigurationSearchSpace::ConfigurationSearchSpace(Set<ConfigurationSearchParameter> const& parameters) {
-    PRONEST_PRECONDITION(not parameters.empty());
+    UTILITY_PRECONDITION(not parameters.empty());
     for (auto const& p : parameters)
         _parameters.push_back(p);
 }
 
 ConfigurationSearchPoint ConfigurationSearchSpace::make_point(ParameterBindingsMap const& bindings) const {
-    PRONEST_PRECONDITION(bindings.size() == this->dimension())
+    UTILITY_PRECONDITION(bindings.size() == this->dimension())
     ParameterBindingsMap pb;
     for (auto p : _parameters) {
         int v = bindings.find(p.path())->second;
@@ -58,17 +60,17 @@ ConfigurationSearchPoint ConfigurationSearchSpace::initial_point() const {
 
 SizeType ConfigurationSearchSpace::index(ConfigurationSearchParameter const& p) const {
     for (SizeType i=0; i<_parameters.size(); ++i) if (_parameters.at(i) == p) return i;
-    PRONEST_FAIL_MSG("Task parameter '" << p << "' not found in the space.");
+    UTILITY_FAIL_MSG("Task parameter '" << p << "' not found in the space.");
 }
 
 SizeType ConfigurationSearchSpace::index(ConfigurationPropertyPath const& path) const {
     for (SizeType i=0; i<_parameters.size(); ++i) if (_parameters.at(i).path() == path) return i;
-    PRONEST_FAIL_MSG("Task parameter with path '" << path << "' not found in the space.");
+    UTILITY_FAIL_MSG("Task parameter with path '" << path << "' not found in the space.");
 }
 
 ConfigurationSearchParameter const& ConfigurationSearchSpace::parameter(ConfigurationPropertyPath const& path) const {
     for (SizeType i=0; i<_parameters.size(); ++i) if (_parameters.at(i).path() == path) return _parameters.at(i);
-    PRONEST_FAIL_MSG("Task parameter with path '" << path << "' not found in the space.");
+    UTILITY_FAIL_MSG("Task parameter with path '" << path << "' not found in the space.");
 }
 
 List<ConfigurationSearchParameter> const& ConfigurationSearchSpace::parameters() const {
