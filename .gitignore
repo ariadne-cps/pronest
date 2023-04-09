@@ -5,4 +5,5 @@ build*
 .vscode/
 cmake-build-debug/
 .DS_Store
+submodules/.symbolic
 ~*
