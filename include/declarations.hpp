@@ -36,7 +36,6 @@
 #include <cstdint>
 #include <iosfwd>
 #include <type_traits>
-#include <memory>
 #include <string>
 #include <ostream>
 
@@ -44,11 +43,8 @@ namespace ProNest {
 
 //! \brief Internal name for standard output stream.
 using OutputStream = std::ostream;
-//! \brief Internal name for string.
-using String = std::string;
 //! \brief Internal name for unsigned integer.
 using Nat = unsigned int;
-
 //! \brief Internal name for standard size type, used for sizes of containers.
 using SizeType = std::size_t;
 
