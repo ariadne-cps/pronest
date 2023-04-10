@@ -196,6 +196,7 @@ class TestConfiguration {
         ConfigurationSearchParameter p2(ConfigurationPropertyPath("maximum_step_size"), true, List<int>({-3, -1}));
         ConfigurationSearchParameter p3(ConfigurationPropertyPath("level"), false, List<int>({1, 2}));
         ConfigurationSearchParameter p4(ConfigurationPropertyPath("maximum_order"), true, List<int>({2, 4}));
+
         ConfigurationSearchSpace search_space3({p1, p2, p3, p4});
         UTILITY_TEST_FAIL(make_singleton(a,search_space3.initial_point()));
         ConfigurationSearchSpace search_space4({p1, p2, p3});
@@ -206,6 +207,10 @@ class TestConfiguration {
         a.set_both_use_reconditioning();
         ConfigurationSearchSpace search_space6({p1});
         UTILITY_TEST_FAIL(make_singleton(a,search_space6.initial_point()))
+
+        ConfigurationSearchParameter p5(ConfigurationPropertyPath("incorrect"), false, List<int>({2, 4}));
+        ConfigurationSearchSpace search_space7({p5});
+        UTILITY_TEST_FAIL(make_singleton(a,search_space7.initial_point()));
     }
 
     void test_configuration_hierarchic_search_space() {
