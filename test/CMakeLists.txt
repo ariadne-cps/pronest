@@ -3,6 +3,7 @@ include(CTest)
 set(UNIT_TESTS
     test_configuration_property
     test_configuration_property_path
+    test_configuration_search_parameter
     test_searchable_configuration
 )
 
