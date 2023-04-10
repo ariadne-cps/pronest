@@ -81,6 +81,7 @@ private:
 };
 
 using DoubleConfigurationProperty = RangeConfigurationProperty<double>;
+using IntegerConfigurationProperty = RangeConfigurationProperty<int>;
 using LevelOptionsConfigurationProperty = EnumConfigurationProperty<LevelOptions>;
 using TestConfigurableConfigurationProperty = InterfaceListConfigurationProperty<TestConfigurableInterface>;
 using Log10Converter = Log10SearchSpaceConverter<double>;
@@ -88,36 +89,36 @@ using Log2Converter = Log2SearchSpaceConverter<double>;
 
 namespace ProNest {
 
-template<> struct Configuration<A> : public SearchableConfiguration {
-  public:
-    Configuration() {
-        add_property("use_reconditioning",BooleanConfigurationProperty(false));
-        add_property("maximum_step_size",DoubleConfigurationProperty(std::numeric_limits<double>::infinity(),Log2Converter()));
-        add_property("sweep_threshold",DoubleConfigurationProperty(std::numeric_limits<double>::infinity(),Log2Converter()));
-        add_property("level",LevelOptionsConfigurationProperty(LevelOptions::LOW));
-        add_property("test_configurable",TestConfigurableConfigurationProperty(TestConfigurable(Configuration<TestConfigurable>())));
-    }
+    template<> struct Configuration<A> : public SearchableConfiguration {
+    public:
+        Configuration() {
+            add_property("use_reconditioning",BooleanConfigurationProperty(false));
+            add_property("maximum_order",IntegerConfigurationProperty(5));
+            add_property("maximum_step_size",DoubleConfigurationProperty(std::numeric_limits<double>::infinity(),Log2Converter()));
+            add_property("level",LevelOptionsConfigurationProperty(LevelOptions::LOW));
+            add_property("test_configurable",TestConfigurableConfigurationProperty(TestConfigurable(Configuration<TestConfigurable>())));
+        }
 
-    bool const& use_reconditioning() const { return at<BooleanConfigurationProperty>("use_reconditioning").get(); }
-    void set_both_use_reconditioning() { at<BooleanConfigurationProperty>("use_reconditioning").set_both(); }
-    void set_use_reconditioning(bool const& value) { at<BooleanConfigurationProperty>("use_reconditioning").set(value); }
+        bool const& use_reconditioning() const { return at<BooleanConfigurationProperty>("use_reconditioning").get(); }
+        void set_both_use_reconditioning() { at<BooleanConfigurationProperty>("use_reconditioning").set_both(); }
+        void set_use_reconditioning(bool const& value) { at<BooleanConfigurationProperty>("use_reconditioning").set(value); }
 
-    double const& maximum_step_size() const { return at<DoubleConfigurationProperty>("maximum_step_size").get(); }
-    void set_maximum_step_size(double const& value) { at<DoubleConfigurationProperty>("maximum_step_size").set(value); }
-    void set_maximum_step_size(double const& lower, double const& upper) { at<DoubleConfigurationProperty>("maximum_step_size").set(lower,upper); }
+        int const& maximum_order() const { return at<IntegerConfigurationProperty>("maximum_order").get(); }
+        void set_maximum_order(int const& value) { at<IntegerConfigurationProperty>("maximum_order").set(value); }
+        void set_maximum_order(int const& lower, int const& upper) { at<IntegerConfigurationProperty>("maximum_order").set(lower,upper); }
 
-    double const& sweep_threshold() const { return at<DoubleConfigurationProperty>("sweep_threshold").get(); }
-    void set_sweep_threshold(double const& value) { at<DoubleConfigurationProperty>("sweep_threshold").set(value); }
-    void set_sweep_threshold(double const& lower, double const& upper) { at<DoubleConfigurationProperty>("sweep_threshold").set(lower,upper); }
+        double const& maximum_step_size() const { return at<DoubleConfigurationProperty>("maximum_step_size").get(); }
+        void set_maximum_step_size(double const& value) { at<DoubleConfigurationProperty>("maximum_step_size").set(value); }
+        void set_maximum_step_size(double const& lower, double const& upper) { at<DoubleConfigurationProperty>("maximum_step_size").set(lower,upper); }
 
-    LevelOptions const& level() const { return at<LevelOptionsConfigurationProperty>("level").get(); }
-    void set_level(LevelOptions const& level) { at<LevelOptionsConfigurationProperty>("level").set(level); }
-    void set_level(List<LevelOptions> const& levels) { at<LevelOptionsConfigurationProperty>("level").set(levels); }
+        LevelOptions const& level() const { return at<LevelOptionsConfigurationProperty>("level").get(); }
+        void set_level(LevelOptions const& level) { at<LevelOptionsConfigurationProperty>("level").set(level); }
+        void set_level(List<LevelOptions> const& levels) { at<LevelOptionsConfigurationProperty>("level").set(levels); }
 
-    TestConfigurableInterface const& test_configurable() const { return at<TestConfigurableConfigurationProperty>("test_configurable").get(); }
-    void set_test_configurable(TestConfigurableInterface const& test_configurable) { at<TestConfigurableConfigurationProperty>("test_configurable").set(test_configurable); }
-    void set_test_configurable(shared_ptr<TestConfigurableInterface> const& test_configurable) { at<TestConfigurableConfigurationProperty>("test_configurable").set(test_configurable); }
-};
+        TestConfigurableInterface const& test_configurable() const { return at<TestConfigurableConfigurationProperty>("test_configurable").get(); }
+        void set_test_configurable(TestConfigurableInterface const& test_configurable) { at<TestConfigurableConfigurationProperty>("test_configurable").set(test_configurable); }
+        void set_test_configurable(shared_ptr<TestConfigurableInterface> const& test_configurable) { at<TestConfigurableConfigurationProperty>("test_configurable").set(test_configurable); }
+    };
 
 }
 
@@ -144,6 +145,9 @@ class TestConfiguration {
         UTILITY_TEST_EQUALS(ca.level(),LevelOptions::LOW);
         ca.set_level(LevelOptions::MEDIUM);
         UTILITY_TEST_EQUALS(ca.level(),LevelOptions::MEDIUM);
+        UTILITY_TEST_EQUALS(ca.maximum_order(),5);
+        ca.set_maximum_order(3);
+        UTILITY_TEST_EQUALS(ca.maximum_order(),3);
         UTILITY_TEST_FAIL(ca.at<EnumConfigurationProperty<LevelOptions>>(ConfigurationPropertyPath("inexistent")));
         auto level_prop = ca.at<EnumConfigurationProperty<LevelOptions>>(ConfigurationPropertyPath("level"));
         UTILITY_TEST_EQUALS(level_prop.get(),LevelOptions::MEDIUM);
@@ -190,15 +194,18 @@ class TestConfiguration {
 
         ConfigurationSearchParameter p1(ConfigurationPropertyPath("use_reconditioning"), false, List<int>({0, 1}));
         ConfigurationSearchParameter p2(ConfigurationPropertyPath("maximum_step_size"), true, List<int>({-3, -1}));
-        ConfigurationSearchParameter p3(ConfigurationPropertyPath("sweep_threshold"), true, List<int>({-10, -8}));
-        ConfigurationSearchSpace search_space3({p1, p2, p3});
+        ConfigurationSearchParameter p3(ConfigurationPropertyPath("level"), false, List<int>({1, 2}));
+        ConfigurationSearchParameter p4(ConfigurationPropertyPath("maximum_order"), true, List<int>({2, 4}));
+        ConfigurationSearchSpace search_space3({p1, p2, p3, p4});
         UTILITY_TEST_FAIL(make_singleton(a,search_space3.initial_point()));
-        a.set_use_reconditioning(false);
-        ConfigurationSearchSpace search_space4({p1, p2});
+        ConfigurationSearchSpace search_space4({p1, p2, p3});
         UTILITY_TEST_FAIL(make_singleton(a,search_space4.initial_point()));
+        a.set_use_reconditioning(false);
+        ConfigurationSearchSpace search_space5({p1, p2});
+        UTILITY_TEST_FAIL(make_singleton(a,search_space5.initial_point()));
         a.set_both_use_reconditioning();
-        ConfigurationSearchSpace search_space5({p1});
-        UTILITY_TEST_FAIL(make_singleton(a,search_space5.initial_point()))
+        ConfigurationSearchSpace search_space6({p1});
+        UTILITY_TEST_FAIL(make_singleton(a,search_space6.initial_point()))
     }
 
     void test_configuration_hierarchic_search_space() {
