@@ -36,10 +36,10 @@
 #include <ostream>
 #include <type_traits>
 #include "utility/writable.hpp"
-#include "using.hpp"
 
 namespace ProNest {
 
+using std::ostream;
 using Utility::WritableInterface;
 
 /*! \brief Configuration altering the model of a class.

@@ -33,6 +33,7 @@
 namespace ProNest {
 
 using Utility::Pair;
+using std::shared_ptr;
 
 SearchableConfiguration::SearchableConfiguration(SearchableConfiguration const& c) {
     for (auto const& p : c.properties()) _properties.insert(Pair<String,shared_ptr<ConfigurationPropertyInterface>>(p.first,shared_ptr<ConfigurationPropertyInterface>(p.second->clone())));

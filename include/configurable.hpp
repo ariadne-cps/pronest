@@ -42,9 +42,9 @@
 #ifndef PRONEST_CONFIGURABLE_HPP
 #define PRONEST_CONFIGURABLE_HPP
 
-#include "using.hpp"
-
 namespace ProNest {
+
+using std::shared_ptr;
 
 class SearchableConfiguration;
 
