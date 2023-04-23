@@ -62,10 +62,15 @@ int ConfigurationSearchParameter::shifted_value_from(int value) const {
         if (UniformIntRandomiser<size_t>(0,1).get() == 0) return value+1;
         else return value-1;
     } else {
-
-        size_t rand_value = UniformIntRandomiser<size_t>(0,num_values-1).get();
-        if (_values[rand_value] == value) return _values[num_values-1];
-        else return _values[rand_value];
+        int result = 0;
+        while (true) {
+            size_t rand_value = UniformIntRandomiser<size_t>(0,num_values-1).get();
+            if (_values[rand_value] != value) {
+                result = _values[rand_value];
+                break;
+            }
+        }
+        return result;
     }
 }
 
