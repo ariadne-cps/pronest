@@ -257,7 +257,7 @@ template<class T> void EnumConfigurationProperty<T>::set(Set<T> const& values) {
 
 template<class T> List<shared_ptr<T>> EnumConfigurationProperty<T>::values() const {
     List<shared_ptr<T>> result;
-    for (auto v : _values) result.push_back(shared_ptr<T>(new T(v)));
+    for (auto const& v : _values) result.push_back(shared_ptr<T>(new T(v)));
     return result;
 }
 
@@ -393,7 +393,7 @@ template<class T> void HandleListConfigurationProperty<T>::set(List<T> const& va
 
 template<class T> List<shared_ptr<T>> HandleListConfigurationProperty<T>::values() const {
     List<shared_ptr<T>> result;
-    for (auto v : _values) result.push_back(shared_ptr<T>(new T(v)));
+    for (auto const& v : _values) result.push_back(shared_ptr<T>(new T(v)));
     return result;
 }
 
@@ -490,7 +490,7 @@ template<class T> Map<ConfigurationPropertyPath,List<int>> InterfaceListConfigur
 
 template<class T> ConfigurationPropertyInterface* InterfaceListConfigurationProperty<T>::clone() const {
     List<shared_ptr<T>> values;
-    for (auto ptr : _values) values.push_back(shared_ptr<T>(ptr->clone()));
+    for (auto const& ptr : _values) values.push_back(shared_ptr<T>(ptr->clone()));
     return new InterfaceListConfigurationProperty(values);
 }
 
