@@ -28,8 +28,11 @@
 
 #include "configuration_search_point.hpp"
 #include "configuration_search_space.hpp"
+#include "utility/randomiser.hpp"
 
 namespace ProNest {
+
+using Utility::UniformIntRandomiser;
 
 ConfigurationSearchPoint::ConfigurationSearchPoint(ConfigurationSearchSpace const& space, ParameterBindingsMap const& bindings)
     : _space(space.clone()), _bindings(bindings) { }
@@ -50,7 +53,7 @@ Set<ConfigurationSearchPoint> ConfigurationSearchPoint::make_random_shifted(unsi
         unsigned int total_breadth = 0; for (auto const& b : breadths) total_breadth += b;
         auto space = this->space();
 
-        unsigned int offset = (unsigned int)rand() % total_breadth;
+        unsigned int offset = UniformIntRandomiser<unsigned int>(0,total_breadth-1).get();
         unsigned int current_breadth = 0;
         ParameterBindingsMap shifted_bindings;
         bool shifted = false;
@@ -66,7 +69,7 @@ Set<ConfigurationSearchPoint> ConfigurationSearchPoint::make_random_shifted(unsi
         }
         result.insert(space.make_point(shifted_bindings));
 
-        unsigned int new_choice = (unsigned int)rand() % result.size();
+        unsigned int new_choice = UniformIntRandomiser<unsigned int>(0,result.size()-1).get();
         auto iter = result.begin();
         for (unsigned int i=0; i<new_choice; ++i) ++iter;
         current_point = *iter;
@@ -81,7 +84,8 @@ ConfigurationSearchPoint ConfigurationSearchPoint::make_adjacent_shifted() const
     UTILITY_PRECONDITION(total_breadth != 0);
     Set<ConfigurationSearchPoint> result;
     auto space = this->space();
-    unsigned int offset = (unsigned int)rand() % total_breadth;
+
+    unsigned int offset = UniformIntRandomiser<unsigned int>(0,total_breadth-1).get();
 
     unsigned int current_breadth = 0;
     ParameterBindingsMap shifted_bindings;

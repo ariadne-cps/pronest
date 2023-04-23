@@ -26,9 +26,12 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include "utility/randomiser.hpp"
 #include "configuration_search_parameter.hpp"
 
 namespace ProNest {
+
+using Utility::UniformIntRandomiser;
 
 ConfigurationSearchParameter::ConfigurationSearchParameter(ConfigurationPropertyPath const& path, bool is_metric, List<int> const& values) :
     _path(path), _is_metric(is_metric), _values(values) {
@@ -48,7 +51,7 @@ bool ConfigurationSearchParameter::is_metric() const {
 }
 
 int ConfigurationSearchParameter::random_value() const {
-    return _values[(size_t)rand() % _values.size()];
+    return _values[UniformIntRandomiser<size_t>(0,_values.size()-1).get()];
 }
 
 int ConfigurationSearchParameter::shifted_value_from(int value) const {
@@ -56,10 +59,11 @@ int ConfigurationSearchParameter::shifted_value_from(int value) const {
     if (_is_metric) {
         if (value == _values[0]) return value+1;
         if (value == _values[num_values-1]) return value-1;
-        if ((size_t)rand() % 2 == 0) return value+1;
+        if (UniformIntRandomiser<size_t>(0,1).get() == 0) return value+1;
         else return value-1;
     } else {
-        size_t rand_value = (size_t)rand() % (num_values-1);
+
+        size_t rand_value = UniformIntRandomiser<size_t>(0,num_values-1).get();
         if (_values[rand_value] == value) return _values[num_values-1];
         else return _values[rand_value];
     }
