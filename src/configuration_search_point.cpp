@@ -69,9 +69,9 @@ Set<ConfigurationSearchPoint> ConfigurationSearchPoint::make_random_shifted(unsi
         }
         result.insert(space.make_point(shifted_bindings));
 
-        unsigned int new_choice = UniformIntRandomiser<unsigned int>(0,result.size()-1).get();
+        size_t new_choice = UniformIntRandomiser<size_t>(0,result.size()-1).get();
         auto iter = result.begin();
-        for (unsigned int i=0; i<new_choice; ++i) ++iter;
+        for (size_t i=0; i<new_choice; ++i) ++iter;
         current_point = *iter;
     }
     return result;
