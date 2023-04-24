@@ -26,7 +26,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "utility/test.hpp"
+#include "helper/test.hpp"
 #include "searchable_configuration.hpp"
 #include "configuration_property.tpl.hpp"
 #include "configuration_search_space.hpp"
@@ -35,7 +35,7 @@
 
 using namespace std;
 using namespace ProNest;
-using namespace Utility;
+using namespace Helper;
 
 class A;
 
@@ -45,7 +45,7 @@ std::ostream& operator<<(std::ostream& os, const LevelOptions level) {
         case LevelOptions::LOW: os << "LOW"; return os;
         case LevelOptions::MEDIUM: os << "MEDIUM"; return os;
         case LevelOptions::HIGH: os << "HIGH"; return os;
-        default: UTILITY_FAIL_MSG("Unhandled LevelOptions value");
+        default: HELPER_FAIL_MSG("Unhandled LevelOptions value");
     }
 }
 
@@ -133,64 +133,64 @@ class TestConfiguration {
 
     void test_configuration_construction() {
         Configuration<A> a;
-        UTILITY_TEST_PRINT(a);
+        HELPER_TEST_PRINT(a);
         a.set_use_reconditioning(true);
-        UTILITY_TEST_ASSERT(a.use_reconditioning());
+        HELPER_TEST_ASSERT(a.use_reconditioning());
         a.set_use_reconditioning(false);
-        UTILITY_TEST_ASSERT(not a.use_reconditioning());
+        HELPER_TEST_ASSERT(not a.use_reconditioning());
     }
 
     void test_configuration_at() {
         Configuration<A> ca;
-        UTILITY_TEST_EQUALS(ca.level(),LevelOptions::LOW);
+        HELPER_TEST_EQUALS(ca.level(),LevelOptions::LOW);
         ca.set_level(LevelOptions::MEDIUM);
-        UTILITY_TEST_EQUALS(ca.level(),LevelOptions::MEDIUM);
-        UTILITY_TEST_EQUALS(ca.maximum_order(),5);
+        HELPER_TEST_EQUALS(ca.level(),LevelOptions::MEDIUM);
+        HELPER_TEST_EQUALS(ca.maximum_order(),5);
         ca.set_maximum_order(3);
-        UTILITY_TEST_EQUALS(ca.maximum_order(),3);
-        UTILITY_TEST_FAIL(ca.at<EnumConfigurationProperty<LevelOptions>>(ConfigurationPropertyPath("inexistent")));
+        HELPER_TEST_EQUALS(ca.maximum_order(),3);
+        HELPER_TEST_FAIL(ca.at<EnumConfigurationProperty<LevelOptions>>(ConfigurationPropertyPath("inexistent")));
         auto level_prop = ca.at<EnumConfigurationProperty<LevelOptions>>(ConfigurationPropertyPath("level"));
-        UTILITY_TEST_EQUALS(level_prop.get(),LevelOptions::MEDIUM);
+        HELPER_TEST_EQUALS(level_prop.get(),LevelOptions::MEDIUM);
         ca.at<LevelOptionsConfigurationProperty>(ConfigurationPropertyPath("level")).set(LevelOptions::HIGH);
-        UTILITY_TEST_EQUALS(ca.level(),LevelOptions::HIGH);
+        HELPER_TEST_EQUALS(ca.level(),LevelOptions::HIGH);
         auto use_something_prop = ca.at<BooleanConfigurationProperty>(ConfigurationPropertyPath("test_configurable").append("use_something"));
-        UTILITY_TEST_EQUALS(use_something_prop.get(),true);
+        HELPER_TEST_EQUALS(use_something_prop.get(),true);
         ca.at<BooleanConfigurationProperty>(ConfigurationPropertyPath("test_configurable").append("use_something")).set(false);
         auto use_something_prop_again = ca.at<BooleanConfigurationProperty>(ConfigurationPropertyPath("test_configurable").append("use_something"));
-        UTILITY_TEST_EQUALS(use_something_prop_again.get(),false);
+        HELPER_TEST_EQUALS(use_something_prop_again.get(),false);
     }
 
     void test_configuration_search_space() {
         Configuration<A> a;
-        UTILITY_TEST_FAIL(a.search_space());
+        HELPER_TEST_FAIL(a.search_space());
         a.set_both_use_reconditioning();
         auto search_space = a.search_space();
-        UTILITY_TEST_EQUALS(search_space.dimension(),1);
+        HELPER_TEST_EQUALS(search_space.dimension(),1);
     }
 
     void test_configuration_make_singleton() {
         Configuration<A> a;
         a.set_both_use_reconditioning();
         auto search_space = a.search_space();
-        UTILITY_TEST_PRINT(search_space);
+        HELPER_TEST_PRINT(search_space);
         auto point = search_space.initial_point();
-        UTILITY_TEST_PRINT(point);
+        HELPER_TEST_PRINT(point);
         bool use_reconditioning = (point.coordinates()[0] == 1 ? true : false);
-        UTILITY_TEST_PRINT(use_reconditioning);
+        HELPER_TEST_PRINT(use_reconditioning);
         auto b = make_singleton(a,point);
-        UTILITY_TEST_ASSERT(not a.is_singleton());
-        UTILITY_TEST_ASSERT(b.is_singleton());
-        UTILITY_TEST_EQUALS(b.use_reconditioning(),use_reconditioning);
+        HELPER_TEST_ASSERT(not a.is_singleton());
+        HELPER_TEST_ASSERT(b.is_singleton());
+        HELPER_TEST_EQUALS(b.use_reconditioning(),use_reconditioning);
 
         a.set_maximum_step_size(1e-3,1e-1);
         auto search_space2 = a.search_space();
-        UTILITY_TEST_PRINT(search_space2);
+        HELPER_TEST_PRINT(search_space2);
         point = search_space2.initial_point();
-        UTILITY_TEST_PRINT(point);
+        HELPER_TEST_PRINT(point);
         b = make_singleton(a,point);
-        UTILITY_TEST_ASSERT(not a.is_singleton());
-        UTILITY_TEST_ASSERT(b.is_singleton());
-        UTILITY_TEST_PRINT(b);
+        HELPER_TEST_ASSERT(not a.is_singleton());
+        HELPER_TEST_ASSERT(b.is_singleton());
+        HELPER_TEST_PRINT(b);
 
         ConfigurationSearchParameter p1(ConfigurationPropertyPath("use_reconditioning"), false, List<int>({0, 1}));
         ConfigurationSearchParameter p2(ConfigurationPropertyPath("maximum_step_size"), true, List<int>({-3, -1}));
@@ -198,19 +198,19 @@ class TestConfiguration {
         ConfigurationSearchParameter p4(ConfigurationPropertyPath("maximum_order"), true, List<int>({2, 4}));
 
         ConfigurationSearchSpace search_space3({p1, p2, p3, p4});
-        UTILITY_TEST_FAIL(make_singleton(a,search_space3.initial_point()));
+        HELPER_TEST_FAIL(make_singleton(a,search_space3.initial_point()));
         ConfigurationSearchSpace search_space4({p1, p2, p3});
-        UTILITY_TEST_FAIL(make_singleton(a,search_space4.initial_point()));
+        HELPER_TEST_FAIL(make_singleton(a,search_space4.initial_point()));
         a.set_use_reconditioning(false);
         ConfigurationSearchSpace search_space5({p1, p2});
-        UTILITY_TEST_FAIL(make_singleton(a,search_space5.initial_point()));
+        HELPER_TEST_FAIL(make_singleton(a,search_space5.initial_point()));
         a.set_both_use_reconditioning();
         ConfigurationSearchSpace search_space6({p1});
-        UTILITY_TEST_FAIL(make_singleton(a,search_space6.initial_point()))
+        HELPER_TEST_FAIL(make_singleton(a,search_space6.initial_point()))
 
         ConfigurationSearchParameter p5(ConfigurationPropertyPath("incorrect"), false, List<int>({2, 4}));
         ConfigurationSearchSpace search_space7({p5});
-        UTILITY_TEST_FAIL(make_singleton(a,search_space7.initial_point()));
+        HELPER_TEST_FAIL(make_singleton(a,search_space7.initial_point()));
     }
 
     void test_configuration_hierarchic_search_space() {
@@ -221,9 +221,9 @@ class TestConfiguration {
         ca.set_test_configurable(tc);
         ca.set_both_use_reconditioning();
         auto search_space = ca.search_space();
-        UTILITY_TEST_PRINT(ca);
-        UTILITY_TEST_PRINT(search_space);
-        UTILITY_TEST_EQUALS(search_space.dimension(),2);
+        HELPER_TEST_PRINT(ca);
+        HELPER_TEST_PRINT(search_space);
+        HELPER_TEST_EQUALS(search_space.dimension(),2);
     }
 
     void test_configuration_hierarchic_make_singleton() {
@@ -233,27 +233,27 @@ class TestConfiguration {
         TestConfigurable tc(ctc);
         ca.set_test_configurable(tc);
         ca.set_both_use_reconditioning();
-        UTILITY_TEST_PRINT(ca);
+        HELPER_TEST_PRINT(ca);
         auto search_space = ca.search_space();
-        UTILITY_TEST_PRINT(search_space);
+        HELPER_TEST_PRINT(search_space);
         auto point = search_space.initial_point();
-        UTILITY_TEST_PRINT(point);
+        HELPER_TEST_PRINT(point);
         auto singleton = make_singleton(ca,point);
-        UTILITY_TEST_PRINT(singleton);
+        HELPER_TEST_PRINT(singleton);
     }
 
     void test() {
-        UTILITY_TEST_CALL(test_configuration_construction());
-        UTILITY_TEST_CALL(test_configuration_at());
-        UTILITY_TEST_CALL(test_configuration_search_space());
-        UTILITY_TEST_CALL(test_configuration_make_singleton());
-        UTILITY_TEST_CALL(test_configuration_hierarchic_search_space());
-        UTILITY_TEST_CALL(test_configuration_hierarchic_make_singleton());
+        HELPER_TEST_CALL(test_configuration_construction());
+        HELPER_TEST_CALL(test_configuration_at());
+        HELPER_TEST_CALL(test_configuration_search_space());
+        HELPER_TEST_CALL(test_configuration_make_singleton());
+        HELPER_TEST_CALL(test_configuration_hierarchic_search_space());
+        HELPER_TEST_CALL(test_configuration_hierarchic_make_singleton());
     }
 };
 
 int main() {
 
     TestConfiguration().test();
-    return UTILITY_TEST_FAILURES;
+    return HELPER_TEST_FAILURES;
 }

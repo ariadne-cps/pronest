@@ -29,7 +29,7 @@
 #ifndef PRONEST_CONFIGURABLE_TPL_HPP
 #define PRONEST_CONFIGURABLE_TPL_HPP
 
-#include "utility/macros.hpp"
+#include "helper/macros.hpp"
 #include "configurable.hpp"
 
 namespace ProNest {

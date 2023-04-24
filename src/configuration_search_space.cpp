@@ -32,16 +32,16 @@
 
 namespace ProNest {
 
-using Utility::Pair;
+using Helper::Pair;
 
 ConfigurationSearchSpace::ConfigurationSearchSpace(Set<ConfigurationSearchParameter> const& parameters) {
-    UTILITY_PRECONDITION(not parameters.empty());
+    HELPER_PRECONDITION(not parameters.empty());
     for (auto const& p : parameters)
         _parameters.push_back(p);
 }
 
 ConfigurationSearchPoint ConfigurationSearchSpace::make_point(ParameterBindingsMap const& bindings) const {
-    UTILITY_PRECONDITION(bindings.size() == this->dimension())
+    HELPER_PRECONDITION(bindings.size() == this->dimension())
     ParameterBindingsMap pb;
     for (auto const& p : _parameters) {
         int v = bindings.find(p.path())->second;
@@ -60,17 +60,17 @@ ConfigurationSearchPoint ConfigurationSearchSpace::initial_point() const {
 
 size_t ConfigurationSearchSpace::index(ConfigurationSearchParameter const& p) const {
     for (size_t i=0; i<_parameters.size(); ++i) if (_parameters.at(i) == p) return i;
-    UTILITY_FAIL_MSG("Task parameter '" << p << "' not found in the space.");
+    HELPER_FAIL_MSG("Task parameter '" << p << "' not found in the space.");
 }
 
 size_t ConfigurationSearchSpace::index(ConfigurationPropertyPath const& path) const {
     for (size_t i=0; i<_parameters.size(); ++i) if (_parameters.at(i).path() == path) return i;
-    UTILITY_FAIL_MSG("Task parameter with path '" << path << "' not found in the space.");
+    HELPER_FAIL_MSG("Task parameter with path '" << path << "' not found in the space.");
 }
 
 ConfigurationSearchParameter const& ConfigurationSearchSpace::parameter(ConfigurationPropertyPath const& path) const {
     for (auto const& p : _parameters) if (p.path() == path) return p;
-    UTILITY_FAIL_MSG("Task parameter with path '" << path << "' not found in the space.");
+    HELPER_FAIL_MSG("Task parameter with path '" << path << "' not found in the space.");
 }
 
 List<ConfigurationSearchParameter> const& ConfigurationSearchSpace::parameters() const {

@@ -33,14 +33,14 @@
 #ifndef PRONEST_CONFIGURATION_SEARCH_PARAMETER_HPP
 #define PRONEST_CONFIGURATION_SEARCH_PARAMETER_HPP
 
-#include "utility/container.hpp"
-#include "utility/macros.hpp"
+#include "helper/container.hpp"
+#include "helper/macros.hpp"
 #include "configuration_property_path.hpp"
 
 namespace ProNest {
 
 using std::ostream;
-using Utility::List;
+using Helper::List;
 
 class ConfigurationSearchParameter {
   public:

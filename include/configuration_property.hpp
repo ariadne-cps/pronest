@@ -35,18 +35,18 @@
 
 #include <ostream>
 #include <type_traits>
-#include "utility/macros.hpp"
-#include "utility/container.hpp"
-#include "utility/handle.hpp"
+#include "helper/macros.hpp"
+#include "helper/container.hpp"
+#include "helper/handle.hpp"
 #include "configuration_interface.hpp"
 #include "configuration_property_interface.hpp"
 #include "configuration_search_space_converter.hpp"
 
 namespace ProNest {
 
-using Utility::List;
-using Utility::Map;
-using Utility::Set;
+using Helper::List;
+using Helper::Map;
+using Helper::Set;
 using std::shared_ptr;
 
 template<class T> class ConfigurationPropertyBase : public ConfigurationPropertyInterface {

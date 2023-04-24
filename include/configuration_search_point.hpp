@@ -39,7 +39,7 @@
 
 namespace ProNest {
 
-using Utility::List;
+using Helper::List;
 
 using ParameterBindingsMap = Map<ConfigurationPropertyPath,int>;
 
@@ -106,14 +106,14 @@ Set<ConfigurationSearchPoint> make_extended_set_by_shifting(Set<ConfigurationSea
 
 //! \brief Make a configuration from another configuration \a cfg and a point \a p in the search space
 template<class C> Configuration<C> make_singleton(Configuration<C> const& cfg, ConfigurationSearchPoint const& p) {
-    UTILITY_PRECONDITION(not cfg.is_singleton());
+    HELPER_PRECONDITION(not cfg.is_singleton());
     Configuration<C> result = cfg;
     for (auto const& param : p.space().parameters()) {
         auto prop_ptr = result.properties().find(param.path().first());
-        UTILITY_ASSERT_MSG(prop_ptr != result.properties().end(), "The ConfigurationSearchPoint parameter '" << param.path() << "' is not in the configuration.");
+        HELPER_ASSERT_MSG(prop_ptr != result.properties().end(), "The ConfigurationSearchPoint parameter '" << param.path() << "' is not in the configuration.");
         prop_ptr->second->set_single(param.path().subpath(),p.value(param.path()));
     }
-    UTILITY_ASSERT_MSG(result.is_singleton(),"There are missing parameters in the search point, since the configuration could not be made singleton.");
+    HELPER_ASSERT_MSG(result.is_singleton(),"There are missing parameters in the search point, since the configuration could not be made singleton.");
     return result;
 }
 

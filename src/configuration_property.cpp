@@ -27,7 +27,7 @@
  */
 
 #include <ostream>
-#include "utility/macros.hpp"
+#include "helper/macros.hpp"
 #include "configuration_property.hpp"
 #include "configuration_property.tpl.hpp"
 
@@ -42,13 +42,13 @@ BooleanConfigurationProperty::BooleanConfigurationProperty(bool const& value)
 { }
 
 ConfigurationPropertyInterface* BooleanConfigurationProperty::at(ConfigurationPropertyPath const& path) {
-    UTILITY_ASSERT_MSG(path.is_root(),"The path " << path << " is not a root but a boolean property can't have configurable objects below.");
+    HELPER_ASSERT_MSG(path.is_root(),"The path " << path << " is not a root but a boolean property can't have configurable objects below.");
     return this;
 }
 
 bool const& BooleanConfigurationProperty::get() const {
-    UTILITY_PRECONDITION(this->is_specified());
-    UTILITY_ASSERT_MSG(this->is_single(),"The property should have a single value when actually used. Are you accessing it outside the related task?");
+    HELPER_PRECONDITION(this->is_specified());
+    HELPER_ASSERT_MSG(this->is_single(),"The property should have a single value when actually used. Are you accessing it outside the related task?");
     return _value;
 }
 
@@ -57,7 +57,7 @@ bool BooleanConfigurationProperty::is_single() const {
 }
 
 bool BooleanConfigurationProperty::is_metric(ConfigurationPropertyPath const& path) const {
-    UTILITY_PRECONDITION(path.is_root());
+    HELPER_PRECONDITION(path.is_root());
     return false;
 }
 
@@ -79,13 +79,13 @@ List<int> BooleanConfigurationProperty::local_integer_values() const {
 }
 
 void BooleanConfigurationProperty::set_single(ConfigurationPropertyPath const& path, int integer_value) {
-    UTILITY_PRECONDITION(path.is_root());
+    HELPER_PRECONDITION(path.is_root());
     local_set_single(integer_value);
 }
 
 void BooleanConfigurationProperty::local_set_single(int integer_value) {
-    UTILITY_PRECONDITION(not _is_single);
-    UTILITY_PRECONDITION(integer_value == 0 or integer_value == 1);
+    HELPER_PRECONDITION(not _is_single);
+    HELPER_PRECONDITION(integer_value == 0 or integer_value == 1);
     _is_single = true;
     if (integer_value == 1) _value = true;
     else _value = false;

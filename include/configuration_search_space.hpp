@@ -33,13 +33,13 @@
 #ifndef PRONEST_CONFIGURATION_SEARCH_SPACE_HPP
 #define PRONEST_CONFIGURATION_SEARCH_SPACE_HPP
 
-#include "utility/container.hpp"
+#include "helper/container.hpp"
 #include "configuration_search_parameter.hpp"
 
 namespace ProNest {
 
-using Utility::Map;
-using Utility::Set;
+using Helper::Map;
+using Helper::Set;
 using std::ostream;
 
 class ConfigurationSearchPoint;

@@ -26,16 +26,16 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "utility/randomiser.hpp"
+#include "helper/randomiser.hpp"
 #include "configuration_search_parameter.hpp"
 
 namespace ProNest {
 
-using Utility::UniformIntRandomiser;
+using Helper::UniformIntRandomiser;
 
 ConfigurationSearchParameter::ConfigurationSearchParameter(ConfigurationPropertyPath const& path, bool is_metric, List<int> const& values) :
     _path(path), _is_metric(is_metric), _values(values) {
-    UTILITY_PRECONDITION(values.size()>1);
+    HELPER_PRECONDITION(values.size()>1);
 }
 
 ConfigurationPropertyPath const& ConfigurationSearchParameter::path() const {

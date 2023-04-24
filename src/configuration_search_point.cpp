@@ -28,11 +28,11 @@
 
 #include "configuration_search_point.hpp"
 #include "configuration_search_space.hpp"
-#include "utility/randomiser.hpp"
+#include "helper/randomiser.hpp"
 
 namespace ProNest {
 
-using Utility::UniformIntRandomiser;
+using Helper::UniformIntRandomiser;
 
 ConfigurationSearchPoint::ConfigurationSearchPoint(ConfigurationSearchSpace const& space, ParameterBindingsMap const& bindings)
     : _space(space.clone()), _bindings(bindings) { }
@@ -81,7 +81,7 @@ ConfigurationSearchPoint ConfigurationSearchPoint::make_adjacent_shifted() const
     List<unsigned int> breadths = this->shift_breadths();
     unsigned int total_breadth = 0;
     for (auto const& b : breadths) total_breadth += b;
-    UTILITY_PRECONDITION(total_breadth != 0);
+    HELPER_PRECONDITION(total_breadth != 0);
     Set<ConfigurationSearchPoint> result;
     auto space = this->space();
 
@@ -184,8 +184,8 @@ List<unsigned int> ConfigurationSearchPoint::shift_breadths() const {
 }
 
 Set<ConfigurationSearchPoint> make_extended_set_by_shifting(Set<ConfigurationSearchPoint> const& sources, size_t size) {
-    UTILITY_PRECONDITION(size>=sources.size());
-    UTILITY_PRECONDITION(sources.begin()->space().total_points() >= size);
+    HELPER_PRECONDITION(size>=sources.size());
+    HELPER_PRECONDITION(sources.begin()->space().total_points() >= size);
     auto expanded_sources = sources; // To be expanded if the previous sources are incapable of getting the required size
     auto result = sources;
 

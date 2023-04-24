@@ -26,7 +26,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "utility/test.hpp"
+#include "helper/test.hpp"
 #include "configuration_property_path.hpp"
 
 using namespace ProNest;
@@ -36,42 +36,42 @@ class TestConfigurationPropertyPath {
 
     void test_construction() {
         ConfigurationPropertyPath p;
-        UTILITY_TEST_EQUALS(p.repr(),"./");
+        HELPER_TEST_EQUALS(p.repr(),"./");
         ConfigurationPropertyPath p2("child");
-        UTILITY_TEST_EQUALS(p2.repr(),"./child/");
+        HELPER_TEST_EQUALS(p2.repr(),"./child/");
         ConfigurationPropertyPath p3(p);
-        UTILITY_TEST_EQUALS(p3.repr(),"./");
+        HELPER_TEST_EQUALS(p3.repr(),"./");
     }
 
     void test_append() {
         ConfigurationPropertyPath p;
         p.append("child1");
-        UTILITY_TEST_EQUALS(p.repr(),"./child1/");
+        HELPER_TEST_EQUALS(p.repr(),"./child1/");
         p.append("child2");
-        UTILITY_TEST_EQUALS(p.repr(),"./child1/child2/");
+        HELPER_TEST_EQUALS(p.repr(),"./child1/child2/");
     }
 
     void test_prepend() {
         ConfigurationPropertyPath p;
         p.prepend("child2");
-        UTILITY_TEST_EQUALS(p.repr(),"./child2/");
+        HELPER_TEST_EQUALS(p.repr(),"./child2/");
         p.prepend("child1");
-        UTILITY_TEST_EQUALS(p.repr(),"./child1/child2/");
+        HELPER_TEST_EQUALS(p.repr(),"./child1/child2/");
     }
 
     void test_first_last_subpath() {
         ConfigurationPropertyPath p;
-        UTILITY_TEST_FAIL(p.first());
-        UTILITY_TEST_FAIL(p.last())
+        HELPER_TEST_FAIL(p.first());
+        HELPER_TEST_FAIL(p.last())
         p.append("child1");
         p.append("child2");
-        UTILITY_TEST_EQUALS(p.repr(),"./child1/child2/");
+        HELPER_TEST_EQUALS(p.repr(),"./child1/child2/");
         auto sp = p.subpath();
-        UTILITY_TEST_EQUALS(sp.repr(),"./child2/");
+        HELPER_TEST_EQUALS(sp.repr(),"./child2/");
         auto f = p.first();
-        UTILITY_TEST_EQUALS(f,"child1");
+        HELPER_TEST_EQUALS(f,"child1");
         auto l = p.last();
-        UTILITY_TEST_EQUALS(l,"child2");
+        HELPER_TEST_EQUALS(l,"child2");
     }
 
     void test_copy() {
@@ -79,8 +79,8 @@ class TestConfigurationPropertyPath {
         p1.append("child1");
         auto p2 = p1;
         p2.append("child2");
-        UTILITY_TEST_EQUALS(p1.repr(),"./child1/");
-        UTILITY_TEST_EQUALS(p2.repr(),"./child1/child2/");
+        HELPER_TEST_EQUALS(p1.repr(),"./child1/");
+        HELPER_TEST_EQUALS(p2.repr(),"./child1/child2/");
     }
 
     void test_less_equal() {
@@ -88,24 +88,24 @@ class TestConfigurationPropertyPath {
         p1.append("child1");
         ConfigurationPropertyPath p2;
         p2.append("child1");
-        UTILITY_TEST_EQUAL(p1,p2);
+        HELPER_TEST_EQUAL(p1,p2);
         p2.append("child2");
-        UTILITY_TEST_ASSERT(p1<p2);
+        HELPER_TEST_ASSERT(p1<p2);
         p2.prepend("child0");
-        UTILITY_TEST_ASSERT(p2<p1);
+        HELPER_TEST_ASSERT(p2<p1);
     }
 
     void test() {
-        UTILITY_TEST_CALL(test_construction());
-        UTILITY_TEST_CALL(test_append());
-        UTILITY_TEST_CALL(test_prepend());
-        UTILITY_TEST_CALL(test_first_last_subpath());
-        UTILITY_TEST_CALL(test_copy());
-        UTILITY_TEST_CALL(test_less_equal());
+        HELPER_TEST_CALL(test_construction());
+        HELPER_TEST_CALL(test_append());
+        HELPER_TEST_CALL(test_prepend());
+        HELPER_TEST_CALL(test_first_last_subpath());
+        HELPER_TEST_CALL(test_copy());
+        HELPER_TEST_CALL(test_less_equal());
     }
 };
 
 int main() {
     TestConfigurationPropertyPath().test();
-    return UTILITY_TEST_FAILURES;
+    return HELPER_TEST_FAILURES;
 }

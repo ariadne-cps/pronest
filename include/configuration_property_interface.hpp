@@ -33,14 +33,14 @@
 #ifndef PRONEST_CONFIGURATION_PROPERTY_INTERFACE_HPP
 #define PRONEST_CONFIGURATION_PROPERTY_INTERFACE_HPP
 
-#include "utility/writable.hpp"
-#include "utility/container.hpp"
+#include "helper/writable.hpp"
+#include "helper/container.hpp"
 
 namespace ProNest {
 
-using Utility::List;
-using Utility::Map;
-using Utility::WritableInterface;
+using Helper::List;
+using Helper::Map;
+using Helper::WritableInterface;
 
 class ConfigurationPropertyPath;
 

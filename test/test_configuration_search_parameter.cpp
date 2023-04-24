@@ -26,7 +26,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "utility/test.hpp"
+#include "helper/test.hpp"
 #include "configuration_search_point.hpp"
 #include "configuration_search_space.hpp"
 
@@ -37,23 +37,23 @@ class TestConfigurationSearchParameter {
 
     void test_parameter_creation() {
         ConfigurationSearchParameter p(ConfigurationPropertyPath("use_subdivisions"), false, List<int>({0, 1}));
-        UTILITY_TEST_PRINT(p);
+        HELPER_TEST_PRINT(p);
     }
 
     void test_parameter_randomise() {
         ConfigurationSearchParameter p(ConfigurationPropertyPath("use_subdivisions"), false, List<int>({0, 1}));
-        UTILITY_TEST_PRINT(p);
+        HELPER_TEST_PRINT(p);
         List<int> values;
         for (unsigned int i=0; i<16; ++i) values.push_back(p.random_value());
-        UTILITY_TEST_PRINT(values);
+        HELPER_TEST_PRINT(values);
     }
 
     void test_metric_parameter_shift() {
         ConfigurationSearchParameter metric(ConfigurationPropertyPath("sweep_threshold"), true, List<int>({8, 9, 10, 11}));
-        UTILITY_TEST_EQUALS(metric.shifted_value_from(8),9);
-        UTILITY_TEST_EQUALS(metric.shifted_value_from(11),10);
+        HELPER_TEST_EQUALS(metric.shifted_value_from(8),9);
+        HELPER_TEST_EQUALS(metric.shifted_value_from(11),10);
         auto from_1 = metric.shifted_value_from(10);
-        UTILITY_TEST_ASSERT(from_1 == 9 or from_1 == 11);
+        HELPER_TEST_ASSERT(from_1 == 9 or from_1 == 11);
     }
 
     void test_parameter_space() {
@@ -62,12 +62,12 @@ class TestConfigurationSearchParameter {
         ConfigurationSearchParameter bp(use_subdivisions, false, List<int>({0, 1}));
         ConfigurationSearchParameter mp(sweep_threshold, true, List<int>({3, 4, 5}));
         ConfigurationSearchSpace space({bp, mp});
-        UTILITY_TEST_PRINT(space);
-        UTILITY_TEST_PRINT(space.parameters());
-        UTILITY_TEST_EQUALS(space.dimension(),2);
-        UTILITY_TEST_EQUALS(space.index(bp),1);
-        UTILITY_TEST_EQUALS(space.index(mp),0);
-        UTILITY_TEST_EQUALS(space.total_points(),6);
+        HELPER_TEST_PRINT(space);
+        HELPER_TEST_PRINT(space.parameters());
+        HELPER_TEST_EQUALS(space.dimension(),2);
+        HELPER_TEST_EQUALS(space.index(bp),1);
+        HELPER_TEST_EQUALS(space.index(mp),0);
+        HELPER_TEST_EQUALS(space.total_points(),6);
     }
 
     void test_parameter_point_creation() {
@@ -76,12 +76,12 @@ class TestConfigurationSearchParameter {
         ConfigurationSearchParameter bp(use_subdivisions, false, List<int>({0, 1}));
         ConfigurationSearchParameter mp(sweep_threshold, true, List<int>({3, 4, 5}));
         ConfigurationSearchSpace space({bp, mp});
-        UTILITY_TEST_PRINT(space.initial_point());
+        HELPER_TEST_PRINT(space.initial_point());
         Map<ConfigurationPropertyPath,int> bindings = {{use_subdivisions,1},{sweep_threshold,5}};
-        UTILITY_TEST_PRINT(bindings);
+        HELPER_TEST_PRINT(bindings);
         ConfigurationSearchPoint point = space.make_point(bindings);
-        UTILITY_TEST_PRINT(point);
-        UTILITY_TEST_PRINT(point.space());
+        HELPER_TEST_PRINT(point);
+        HELPER_TEST_PRINT(point.space());
     }
 
     void test_parameter_point_equality() {
@@ -94,8 +94,8 @@ class TestConfigurationSearchParameter {
         ConfigurationSearchPoint point1 = space.make_point({{use_subdivisions, 1}, {sweep_threshold, 2}});
         ConfigurationSearchPoint point2 = space.make_point({{use_subdivisions, 1}, {sweep_threshold, 2}});
         ConfigurationSearchPoint point3 = space.make_point({{use_subdivisions, 1}, {sweep_threshold, 3}});
-        UTILITY_TEST_EQUAL(point1,point2);
-        UTILITY_TEST_NOT_EQUAL(point1,point3);
+        HELPER_TEST_EQUAL(point1,point2);
+        HELPER_TEST_NOT_EQUAL(point1,point3);
     }
 
     void test_parameter_point_distance() {
@@ -109,9 +109,9 @@ class TestConfigurationSearchParameter {
         ConfigurationSearchPoint point2 = space.make_point({{use_subdivisions, 1}, {sweep_threshold, 2}});
         ConfigurationSearchPoint point3 = space.make_point({{use_subdivisions, 1}, {sweep_threshold, 3}});
         ConfigurationSearchPoint point4 = space.make_point({{use_subdivisions, 0}, {sweep_threshold, 5}});
-        UTILITY_TEST_EQUALS(point1.distance(point2),0);
-        UTILITY_TEST_EQUALS(point1.distance(point3),1);
-        UTILITY_TEST_EQUALS(point3.distance(point4),3);
+        HELPER_TEST_EQUALS(point1.distance(point2),0);
+        HELPER_TEST_EQUALS(point1.distance(point3),1);
+        HELPER_TEST_EQUALS(point3.distance(point4),3);
     }
 
     void test_parameter_point_adjacent_shift() {
@@ -122,10 +122,10 @@ class TestConfigurationSearchParameter {
         ConfigurationSearchSpace space({bp, mp});
 
         ConfigurationSearchPoint point1 = space.make_point({{use_subdivisions, 1}, {sweep_threshold, 5}});
-        UTILITY_TEST_PRINT(point1);
+        HELPER_TEST_PRINT(point1);
         auto point2 = point1.make_adjacent_shifted();
-        UTILITY_TEST_PRINT(point2);
-        UTILITY_TEST_NOT_EQUAL(point1,point2);
+        HELPER_TEST_PRINT(point2);
+        HELPER_TEST_NOT_EQUAL(point1,point2);
     }
 
     void test_parameter_point_random_shift() {
@@ -137,11 +137,11 @@ class TestConfigurationSearchParameter {
 
         ConfigurationSearchPoint point = space.make_point({{use_subdivisions, 1}, {sweep_threshold, 5}});
         auto points = point.make_random_shifted(1);
-        UTILITY_TEST_EQUALS(points.size(),1);
+        HELPER_TEST_EQUALS(points.size(),1);
         points = point.make_random_shifted(3);
-        UTILITY_TEST_EQUALS(points.size(),3);
+        HELPER_TEST_EQUALS(points.size(),3);
         points = point.make_random_shifted(static_cast<unsigned int>(space.total_points()));
-        UTILITY_TEST_EQUALS(points.size(),space.total_points());
+        HELPER_TEST_EQUALS(points.size(),space.total_points());
     }
 
     void test_parameter_point_adjacent_set_shift() {
@@ -150,47 +150,47 @@ class TestConfigurationSearchParameter {
         ConfigurationSearchParameter bp(use_subdivisions, false, List<int>({0, 1}));
         ConfigurationSearchParameter mp(sweep_threshold, true, List<int>({3, 4, 5, 6, 7, 8}));
         ConfigurationSearchSpace space({bp, mp});
-        UTILITY_TEST_PRINT(space.total_points());
+        HELPER_TEST_PRINT(space.total_points());
 
         ConfigurationSearchPoint point = space.make_point({{use_subdivisions, 1}, {sweep_threshold, 5}});
         Set<ConfigurationSearchPoint> points = point.make_random_shifted(3);
-        UTILITY_TEST_PRINT(points);
+        HELPER_TEST_PRINT(points);
         auto all_points = make_extended_set_by_shifting(points, 5);
-        UTILITY_TEST_EQUALS(all_points.size(),5);
-        UTILITY_TEST_PRINT(all_points);
+        HELPER_TEST_EQUALS(all_points.size(),5);
+        HELPER_TEST_PRINT(all_points);
 
         ConfigurationSearchPoint point1 = space.make_point({{use_subdivisions, 1}, {sweep_threshold, 8}});
         ConfigurationSearchPoint point2 = space.make_point({{use_subdivisions, 0}, {sweep_threshold, 3}});
         Set<ConfigurationSearchPoint> border_points = {point1, point2};
-        UTILITY_TEST_PRINT(border_points);
-        UTILITY_PRINT_TEST_COMMENT("Checking maximum number of single shift points including the original border points");
+        HELPER_TEST_PRINT(border_points);
+        HELPER_PRINT_TEST_COMMENT("Checking maximum number of single shift points including the original border points");
         auto six_points = make_extended_set_by_shifting(border_points, 6);
-        UTILITY_TEST_PRINT(six_points);
-        UTILITY_PRINT_TEST_COMMENT("Checking 1 point over the number of possible adjacent shiftings");
+        HELPER_TEST_PRINT(six_points);
+        HELPER_PRINT_TEST_COMMENT("Checking 1 point over the number of possible adjacent shiftings");
         auto seven_points = make_extended_set_by_shifting(border_points, 7);
-        UTILITY_TEST_PRINT(seven_points);
-        UTILITY_PRINT_TEST_COMMENT("Checking up to the maximum number");
+        HELPER_TEST_PRINT(seven_points);
+        HELPER_PRINT_TEST_COMMENT("Checking up to the maximum number");
         auto twelve_points = make_extended_set_by_shifting(border_points, 12);
-        UTILITY_TEST_PRINT(twelve_points);
-        UTILITY_PRINT_TEST_COMMENT("Checking 1 point over the maximum number");
-        UTILITY_TEST_FAIL(make_extended_set_by_shifting(points, point.space().total_points()+1));
+        HELPER_TEST_PRINT(twelve_points);
+        HELPER_PRINT_TEST_COMMENT("Checking 1 point over the maximum number");
+        HELPER_TEST_FAIL(make_extended_set_by_shifting(points, point.space().total_points()+1));
     }
 
     void test() {
-        UTILITY_TEST_CALL(test_parameter_creation());
-        UTILITY_TEST_CALL(test_parameter_randomise());
-        UTILITY_TEST_CALL(test_metric_parameter_shift());
-        UTILITY_TEST_CALL(test_parameter_space());
-        UTILITY_TEST_CALL(test_parameter_point_creation());
-        UTILITY_TEST_CALL(test_parameter_point_equality());
-        UTILITY_TEST_CALL(test_parameter_point_distance());
-        UTILITY_TEST_CALL(test_parameter_point_adjacent_shift());
-        UTILITY_TEST_CALL(test_parameter_point_random_shift());
-        UTILITY_TEST_CALL(test_parameter_point_adjacent_set_shift());
+        HELPER_TEST_CALL(test_parameter_creation());
+        HELPER_TEST_CALL(test_parameter_randomise());
+        HELPER_TEST_CALL(test_metric_parameter_shift());
+        HELPER_TEST_CALL(test_parameter_space());
+        HELPER_TEST_CALL(test_parameter_point_creation());
+        HELPER_TEST_CALL(test_parameter_point_equality());
+        HELPER_TEST_CALL(test_parameter_point_distance());
+        HELPER_TEST_CALL(test_parameter_point_adjacent_shift());
+        HELPER_TEST_CALL(test_parameter_point_random_shift());
+        HELPER_TEST_CALL(test_parameter_point_adjacent_set_shift());
     }
 };
 
 int main() {
     TestConfigurationSearchParameter().test();
-    return UTILITY_TEST_FAILURES;
+    return HELPER_TEST_FAILURES;
 }

@@ -26,13 +26,13 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "utility/container.hpp"
+#include "helper/container.hpp"
 #include "searchable_configuration.hpp"
 #include "configuration_search_space.hpp"
 
 namespace ProNest {
 
-using Utility::Pair;
+using Helper::Pair;
 using std::shared_ptr;
 
 SearchableConfiguration::SearchableConfiguration(SearchableConfiguration const& c) {
@@ -87,7 +87,7 @@ ConfigurationSearchSpace SearchableConfiguration::search_space() const {
             }
         }
     }
-    UTILITY_ASSERT_MSG(not result.empty(),"The search space is empty.");
+    HELPER_ASSERT_MSG(not result.empty(),"The search space is empty.");
     return result;
 }
 

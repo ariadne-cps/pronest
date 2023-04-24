@@ -35,7 +35,7 @@
 
 #include <ostream>
 #include <type_traits>
-#include "utility/macros.hpp"
+#include "helper/macros.hpp"
 #include "configuration_interface.hpp"
 #include "configuration_property_interface.hpp"
 #include "configuration_property_path.hpp"
@@ -65,16 +65,16 @@ class SearchableConfiguration : public ConfigurationInterface {
     //! \details Used in practice to get/set properties for verification
     template<class P> P& at(ConfigurationPropertyPath const& path) {
         auto prop_ptr = _properties.find(path.first());
-        UTILITY_ASSERT_MSG(prop_ptr != _properties.end(),"The property '" << path.first() << "' was not found in the configuration.");
+        HELPER_ASSERT_MSG(prop_ptr != _properties.end(),"The property '" << path.first() << "' was not found in the configuration.");
         auto p_ptr = dynamic_cast<P*>(prop_ptr->second->at(path.subpath()));
-        UTILITY_ASSERT_MSG(p_ptr != nullptr, "Invalid property cast, check the property class with respect to the configuration created.")
+        HELPER_ASSERT_MSG(p_ptr != nullptr, "Invalid property cast, check the property class with respect to the configuration created.")
         return *p_ptr;
     }
     template<class P> P const& at(ConfigurationPropertyPath const& path) const {
         auto prop_ptr = _properties.find(path.first());
-        UTILITY_ASSERT_MSG(prop_ptr != _properties.end(),"The property '" << path.first() << "' was not found in the configuration.");
+        HELPER_ASSERT_MSG(prop_ptr != _properties.end(),"The property '" << path.first() << "' was not found in the configuration.");
         auto p_ptr = dynamic_cast<P*>(prop_ptr->second->at(path.subpath()));
-        UTILITY_ASSERT_MSG(p_ptr != nullptr, "Invalid property cast, check the property class with respect to the configuration created.")
+        HELPER_ASSERT_MSG(p_ptr != nullptr, "Invalid property cast, check the property class with respect to the configuration created.")
         return *p_ptr;
     }
     //! \brief Easier accessors for get and set starting from an \a identifier, to be used for Configuration class accessors

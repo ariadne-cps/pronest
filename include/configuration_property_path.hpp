@@ -35,11 +35,11 @@
 
 #include <utility>
 #include <deque>
-#include "utility/string.hpp"
+#include "helper/string.hpp"
 
 namespace ProNest {
 
-using Utility::String;
+using Helper::String;
 
 class ConfigurationPropertyPath {
   public:

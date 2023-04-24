@@ -35,12 +35,12 @@
 
 #include <ostream>
 #include <type_traits>
-#include "utility/writable.hpp"
+#include "helper/writable.hpp"
 
 namespace ProNest {
 
 using std::ostream;
-using Utility::WritableInterface;
+using Helper::WritableInterface;
 
 /*! \brief Configuration altering the model of a class.
  *
