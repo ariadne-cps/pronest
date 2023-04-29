@@ -63,7 +63,7 @@ class ConfigurationSearchPoint {
     //! then the next point to shift from is a random one from those already generated
     //! \details Guarantees that all points are different. Includes the original point.
     //! If \a amount is 1, no new point is generated.
-    Set<ConfigurationSearchPoint> make_random_shifted(unsigned int amount) const;
+    Set<ConfigurationSearchPoint> make_random_shifted(size_t amount) const;
 
     ParameterBindingsMap const& bindings() const;
 

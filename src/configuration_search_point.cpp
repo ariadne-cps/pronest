@@ -44,7 +44,7 @@ ConfigurationSearchPoint::ConfigurationSearchPoint(ConfigurationSearchPoint cons
     this->_space.reset(p.space().clone());
 }
 
-Set<ConfigurationSearchPoint> ConfigurationSearchPoint::make_random_shifted(unsigned int amount) const {
+Set<ConfigurationSearchPoint> ConfigurationSearchPoint::make_random_shifted(size_t amount) const {
     Set<ConfigurationSearchPoint> result;
     ConfigurationSearchPoint current_point = *this;
     result.insert(current_point);
