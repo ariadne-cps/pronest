@@ -219,11 +219,11 @@ class TestSearchableConfiguration {
         HELPER_TEST_EQUALS(level_prop.get(),LevelOptions::MEDIUM);
         ca.at<LevelOptionsConfigurationProperty>(ConfigurationPropertyPath("level")).set(LevelOptions::HIGH);
         HELPER_TEST_EQUALS(ca.level(),LevelOptions::HIGH);
-        auto use_something_prop = ca.at<BooleanConfigurationProperty>(ConfigurationPropertyPath("test_configurable").append("use_something"));
-        HELPER_TEST_EQUALS(use_something_prop.get(),true);
-        ca.at<BooleanConfigurationProperty>(ConfigurationPropertyPath("test_configurable").append("use_something")).set(false);
-        auto use_something_prop_again = ca.at<BooleanConfigurationProperty>(ConfigurationPropertyPath("test_configurable").append("use_something"));
-        HELPER_TEST_EQUALS(use_something_prop_again.get(),false);
+        auto sublevel_prop = ca.at<EnumConfigurationProperty<LevelOptions>>(ConfigurationPropertyPath("test_configurable").append("_level"));
+        HELPER_TEST_EQUALS(sublevel_prop.get(),LevelOptions::LOW);
+        ca.at<EnumConfigurationProperty<LevelOptions>>(ConfigurationPropertyPath("test_configurable").append("_level")).set(LevelOptions::LOW);
+        auto sublevel_prop_again = ca.at<EnumConfigurationProperty<LevelOptions>>(ConfigurationPropertyPath("test_configurable").append("_level"));
+        HELPER_TEST_EQUALS(sublevel_prop_again.get(),LevelOptions::LOW);
     }
 
     void test_configuration_search_space() {
