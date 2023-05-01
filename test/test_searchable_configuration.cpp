@@ -27,6 +27,7 @@
  */
 
 #include "helper/test.hpp"
+#include "helper/handle.hpp"
 #include "searchable_configuration.hpp"
 #include "configuration_property.tpl.hpp"
 #include "configuration_search_space.hpp"
@@ -34,6 +35,7 @@
 #include "configuration_search_point.hpp"
 
 using namespace std;
+using namespace Helper;
 using namespace ProNest;
 using namespace Helper;
 
@@ -49,19 +51,30 @@ std::ostream& operator<<(std::ostream& os, const LevelOptions level) {
     }
 }
 
-class TestConfigurable;
-
-namespace ProNest {
-
-template<> struct Configuration<TestConfigurable> : public SearchableConfiguration {
+class TestInterface : public WritableInterface {
   public:
-    Configuration() { add_property("use_something",BooleanConfigurationProperty(true)); }
-    bool const& use_use_something() const { return dynamic_cast<BooleanConfigurationProperty const&>(*properties().get("use_something")).get(); }
-    void set_both_use_something() { dynamic_cast<BooleanConfigurationProperty&>(*properties().get("use_something")).set_both(); }
-    void set_use_something(bool const& value) { dynamic_cast<BooleanConfigurationProperty&>(*properties().get("use_something")).set(value); }
+    virtual TestInterface* clone() const = 0;
 };
 
-}
+class ATest : public TestInterface {
+  public:
+    ostream& _write(ostream& os) const override { return os << "A"; }
+    TestInterface* clone() const override { return new ATest(*this); }
+};
+
+class BTest : public TestInterface {
+  public:
+    ostream& _write(ostream& os) const override { return os << "B"; }
+    TestInterface* clone() const override { return new BTest(*this); }
+};
+
+class TestHandle : public Handle<TestInterface>, public WritableInterface {
+  public:
+    using Handle<TestInterface>::Handle;
+    ostream& _write(ostream& os) const override { return _ptr->_write(os); }
+};
+
+class TestConfigurable;
 
 class TestConfigurableInterface : public WritableInterface {
 public:
@@ -69,8 +82,58 @@ public:
     virtual void set_value(String value) = 0;
     virtual ~TestConfigurableInterface() = default;
 };
+
+using DoubleConfigurationProperty = RangeConfigurationProperty<double>;
+using IntegerConfigurationProperty = RangeConfigurationProperty<int>;
+using LevelOptionsConfigurationProperty = EnumConfigurationProperty<LevelOptions>;
+using TestInterfaceConfigurationProperty = InterfaceListConfigurationProperty<TestInterface>;
+using TestHandleConfigurationProperty = HandleListConfigurationProperty<TestHandle>;
+using TestConfigurableConfigurationProperty = InterfaceListConfigurationProperty<TestConfigurableInterface>;
+using Log10Converter = Log10SearchSpaceConverter<double>;
+using Log2Converter = Log2SearchSpaceConverter<double>;
+
+namespace ProNest {
+
+template<> struct Configuration<TestConfigurable> : public SearchableConfiguration {
+public:
+    Configuration() {
+        add_property("_use_reconditioning",BooleanConfigurationProperty(false));
+        add_property("_maximum_order",IntegerConfigurationProperty(5));
+        add_property("_maximum_step_size",DoubleConfigurationProperty(std::numeric_limits<double>::infinity(),Log2Converter()));
+        add_property("_level",LevelOptionsConfigurationProperty(LevelOptions::LOW));
+        add_property("_test_interface",TestInterfaceConfigurationProperty(ATest()));
+        add_property("_test_handle",TestHandleConfigurationProperty(ATest()));
+    }
+    bool const& use_reconditioning() const { return at<BooleanConfigurationProperty>("_use_reconditioning").get(); }
+    void set_both_use_reconditioning() { at<BooleanConfigurationProperty>("_use_reconditioning").set_both(); }
+    void set_use_reconditioning(bool const& value) { at<BooleanConfigurationProperty>("_use_reconditioning").set(value); }
+
+    int const& maximum_order() const { return at<IntegerConfigurationProperty>("_maximum_order").get(); }
+    void set_maximum_order(int const& value) { at<IntegerConfigurationProperty>("_maximum_order").set(value); }
+    void set_maximum_order(int const& lower, int const& upper) { at<IntegerConfigurationProperty>("_maximum_order").set(lower,upper); }
+
+    double const& maximum_step_size() const { return at<DoubleConfigurationProperty>("_maximum_step_size").get(); }
+    void set_maximum_step_size(double const& value) { at<DoubleConfigurationProperty>("_maximum_step_size").set(value); }
+    void set_maximum_step_size(double const& lower, double const& upper) { at<DoubleConfigurationProperty>("_maximum_step_size").set(lower,upper); }
+
+    LevelOptions const& level() const { return at<LevelOptionsConfigurationProperty>("_level").get(); }
+    void set_level(LevelOptions const& level) { at<LevelOptionsConfigurationProperty>("_level").set(level); }
+    void set_level(List<LevelOptions> const& levels) { at<LevelOptionsConfigurationProperty>("_level").set(levels); }
+
+    TestInterface const& test_interface() const { return at<TestInterfaceConfigurationProperty>("_test_interface").get(); }
+    void set_test_interface(TestInterface const& test_interface) { at<TestInterfaceConfigurationProperty>("_test_interface").set(test_interface); }
+    void set_test_interface(List<shared_ptr<TestInterface>> const& test_interfaces) { at<TestInterfaceConfigurationProperty>("_test_interface").set(test_interfaces); }
+
+    TestHandle const& test_handle() const { return at<TestHandleConfigurationProperty>("_test_handle").get(); }
+    void set_test_handle(TestHandle const& test_handle) { at<TestHandleConfigurationProperty>("_test_handle").set(test_handle); }
+    void set_test_handle(List<TestHandle> const& test_handles) { at<TestHandleConfigurationProperty>("_test_handle").set(test_handles); }
+};
+
+}
+
 class TestConfigurable : public TestConfigurableInterface, public Configurable<TestConfigurable> {
 public:
+    TestConfigurable(String value) : TestConfigurable(Configuration<TestConfigurable>()) { _value = value; }
     TestConfigurable(String value, Configuration<TestConfigurable> const& configuration) : TestConfigurable(configuration) { _value = value; }
     TestConfigurable(Configuration<TestConfigurable> const& configuration) : Configurable<TestConfigurable>(configuration) { }
     void set_value(String value) override { _value = value; }
@@ -79,13 +142,6 @@ public:
 private:
     String _value;
 };
-
-using DoubleConfigurationProperty = RangeConfigurationProperty<double>;
-using IntegerConfigurationProperty = RangeConfigurationProperty<int>;
-using LevelOptionsConfigurationProperty = EnumConfigurationProperty<LevelOptions>;
-using TestConfigurableConfigurationProperty = InterfaceListConfigurationProperty<TestConfigurableInterface>;
-using Log10Converter = Log10SearchSpaceConverter<double>;
-using Log2Converter = Log2SearchSpaceConverter<double>;
 
 namespace ProNest {
 
@@ -96,7 +152,9 @@ namespace ProNest {
             add_property("maximum_order",IntegerConfigurationProperty(5));
             add_property("maximum_step_size",DoubleConfigurationProperty(std::numeric_limits<double>::infinity(),Log2Converter()));
             add_property("level",LevelOptionsConfigurationProperty(LevelOptions::LOW));
-            add_property("test_configurable",TestConfigurableConfigurationProperty(TestConfigurable(Configuration<TestConfigurable>())));
+            add_property("test_interface",TestInterfaceConfigurationProperty(ATest()));
+            add_property("test_handle",TestHandleConfigurationProperty(ATest()));
+            add_property("test_configurable",TestConfigurableConfigurationProperty(TestConfigurable("configurable")));
         }
 
         bool const& use_reconditioning() const { return at<BooleanConfigurationProperty>("use_reconditioning").get(); }
@@ -115,6 +173,14 @@ namespace ProNest {
         void set_level(LevelOptions const& level) { at<LevelOptionsConfigurationProperty>("level").set(level); }
         void set_level(List<LevelOptions> const& levels) { at<LevelOptionsConfigurationProperty>("level").set(levels); }
 
+        TestInterface const& test_interface() const { return at<TestInterfaceConfigurationProperty>("test_interface").get(); }
+        void set_test_interface(TestInterface const& test_interface) { at<TestInterfaceConfigurationProperty>("test_interface").set(test_interface); }
+        void set_test_interface(List<shared_ptr<TestInterface>> const& test_interfaces) { at<TestInterfaceConfigurationProperty>("test_interface").set(test_interfaces); }
+
+        TestHandle const& test_handle() const { return at<TestHandleConfigurationProperty>("test_handle").get(); }
+        void set_test_handle(TestHandle const& test_handle) { at<TestHandleConfigurationProperty>("test_handle").set(test_handle); }
+        void set_test_handle(List<TestHandle> const& test_handles) { at<TestHandleConfigurationProperty>("test_handle").set(test_handles); }
+
         TestConfigurableInterface const& test_configurable() const { return at<TestConfigurableConfigurationProperty>("test_configurable").get(); }
         void set_test_configurable(TestConfigurableInterface const& test_configurable) { at<TestConfigurableConfigurationProperty>("test_configurable").set(test_configurable); }
         void set_test_configurable(shared_ptr<TestConfigurableInterface> const& test_configurable) { at<TestConfigurableConfigurationProperty>("test_configurable").set(test_configurable); }
@@ -128,7 +194,7 @@ class A : public Configurable<A>, public WritableInterface {
     ostream& _write(ostream& os) const override { os << "configuration:" << configuration(); return os; }
 };
 
-class TestConfiguration {
+class TestSearchableConfiguration {
   public:
 
     void test_configuration_construction() {
@@ -216,7 +282,7 @@ class TestConfiguration {
     void test_configuration_hierarchic_search_space() {
         Configuration<A> ca;
         Configuration<TestConfigurable> ctc;
-        ctc.set_both_use_something();
+        ctc.set_both_use_reconditioning();
         TestConfigurable tc(ctc);
         ca.set_test_configurable(tc);
         ca.set_both_use_reconditioning();
@@ -229,8 +295,12 @@ class TestConfiguration {
     void test_configuration_hierarchic_make_singleton() {
         Configuration<A> ca;
         Configuration<TestConfigurable> ctc;
-        ctc.set_both_use_something();
+        ctc.set_test_interface({shared_ptr<TestInterface>(new ATest()),shared_ptr<TestInterface>(new BTest())});
+        ctc.set_test_handle({ATest(),BTest()});
+        ctc.set_both_use_reconditioning();
         TestConfigurable tc(ctc);
+        ca.set_test_interface({shared_ptr<TestInterface>(new ATest()),shared_ptr<TestInterface>(new BTest())});
+        ca.set_test_handle({ATest(),BTest()});
         ca.set_test_configurable(tc);
         ca.set_both_use_reconditioning();
         HELPER_TEST_PRINT(ca);
@@ -240,6 +310,7 @@ class TestConfiguration {
         HELPER_TEST_PRINT(point);
         auto singleton = make_singleton(ca,point);
         HELPER_TEST_PRINT(singleton);
+        HELPER_TEST_PRINT(ca);
     }
 
     void test() {
@@ -254,6 +325,6 @@ class TestConfiguration {
 
 int main() {
 
-    TestConfiguration().test();
+    TestSearchableConfiguration().test();
     return HELPER_TEST_FAILURES;
 }
