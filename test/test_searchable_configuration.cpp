@@ -39,7 +39,7 @@ using namespace Helper;
 using namespace ProNest;
 using namespace Helper;
 
-class A;
+class Top;
 
 enum class LevelOptions { LOW, MEDIUM, HIGH };
 std::ostream& operator<<(std::ostream& os, const LevelOptions level) {
@@ -79,8 +79,33 @@ class TestConfigurable;
 class TestConfigurableInterface : public WritableInterface {
 public:
     virtual TestConfigurableInterface* clone() const = 0;
-    virtual void set_value(String value) = 0;
     virtual ~TestConfigurableInterface() = default;
+};
+
+class TestConfigurableBase;
+
+namespace ProNest {
+
+    template<> struct Configuration<TestConfigurableBase> : public SearchableConfiguration {
+    public:
+        Configuration() {
+            add_property("_use_reconditioning",BooleanConfigurationProperty(false));
+        }
+        bool const& use_reconditioning() const { return at<BooleanConfigurationProperty>("_use_reconditioning").get(); }
+        void set_both_use_reconditioning() { at<BooleanConfigurationProperty>("_use_reconditioning").set_both(); }
+        void set_use_reconditioning(bool const& value) { at<BooleanConfigurationProperty>("_use_reconditioning").set(value); }
+    };
+
+}
+
+class TestConfigurableBase : public TestConfigurableInterface, public Configurable<TestConfigurableBase>  {
+  public:
+    TestConfigurableBase() : TestConfigurableBase(Configuration<TestConfigurableBase>()) { }
+    TestConfigurableBase(Configuration<TestConfigurableBase> const& configuration) : Configurable<TestConfigurableBase>(configuration) { }
+    ostream& _write(ostream& os) const override { os << "TestConfigurableBase(" << configuration() <<")"; return os; }
+    TestConfigurableInterface* clone() const override { auto cfg = configuration(); return new TestConfigurableBase(cfg); }
+  private:
+    String _value;
 };
 
 using DoubleConfigurationProperty = RangeConfigurationProperty<double>;
@@ -94,10 +119,9 @@ using Log2Converter = Log2SearchSpaceConverter<double>;
 
 namespace ProNest {
 
-template<> struct Configuration<TestConfigurable> : public SearchableConfiguration {
+template<> struct Configuration<TestConfigurable> : public Configuration<TestConfigurableBase> {
 public:
     Configuration() {
-        add_property("_use_reconditioning",BooleanConfigurationProperty(false));
         add_property("_maximum_order",IntegerConfigurationProperty(5));
         add_property("_maximum_step_size",DoubleConfigurationProperty(std::numeric_limits<double>::infinity(),Log2Converter()));
         add_property("_level",LevelOptionsConfigurationProperty(LevelOptions::LOW));
@@ -131,21 +155,17 @@ public:
 
 }
 
-class TestConfigurable : public TestConfigurableInterface, public Configurable<TestConfigurable> {
+class TestConfigurable : public TestConfigurableBase {
 public:
-    TestConfigurable(String value) : TestConfigurable(Configuration<TestConfigurable>()) { _value = value; }
-    TestConfigurable(String value, Configuration<TestConfigurable> const& configuration) : TestConfigurable(configuration) { _value = value; }
-    TestConfigurable(Configuration<TestConfigurable> const& configuration) : Configurable<TestConfigurable>(configuration) { }
-    void set_value(String value) override { _value = value; }
-    ostream& _write(ostream& os) const override { os << "TestConfigurable(value="<<_value<<",configuration=" << configuration() <<")"; return os; }
-    TestConfigurableInterface* clone() const override { auto cfg = configuration(); return new TestConfigurable(_value,cfg); }
-private:
-    String _value;
+    TestConfigurable() : TestConfigurable(Configuration<TestConfigurable>()) { }
+    TestConfigurable(Configuration<TestConfigurableBase> const& configuration) : TestConfigurableBase(configuration) { }
+    ostream& _write(ostream& os) const override { os << "TestConfigurable(" << configuration() <<")"; return os; }
+    TestConfigurableInterface* clone() const override { auto cfg = configuration(); return new TestConfigurable(cfg); }
 };
 
 namespace ProNest {
 
-    template<> struct Configuration<A> : public SearchableConfiguration {
+    template<> struct Configuration<Top> : public SearchableConfiguration {
     public:
         Configuration() {
             add_property("use_reconditioning",BooleanConfigurationProperty(false));
@@ -154,7 +174,7 @@ namespace ProNest {
             add_property("level",LevelOptionsConfigurationProperty(LevelOptions::LOW));
             add_property("test_interface",TestInterfaceConfigurationProperty(ATest()));
             add_property("test_handle",TestHandleConfigurationProperty(ATest()));
-            add_property("test_configurable",TestConfigurableConfigurationProperty(TestConfigurable("configurable")));
+            add_property("test_configurable",TestConfigurableConfigurationProperty(TestConfigurable()));
         }
 
         bool const& use_reconditioning() const { return at<BooleanConfigurationProperty>("use_reconditioning").get(); }
@@ -188,9 +208,9 @@ namespace ProNest {
 
 }
 
-class A : public Configurable<A>, public WritableInterface {
+class Top : public Configurable<Top>, public WritableInterface {
   public:
-    A() : Configurable<A>(Configuration<A>()) { }
+    Top() : Configurable<Top>(Configuration<Top>()) { }
     ostream& _write(ostream& os) const override { os << "configuration:" << configuration(); return os; }
 };
 
@@ -198,7 +218,7 @@ class TestSearchableConfiguration {
   public:
 
     void test_configuration_construction() {
-        Configuration<A> a;
+        Configuration<Top> a;
         HELPER_TEST_PRINT(a);
         a.set_use_reconditioning(true);
         HELPER_TEST_ASSERT(a.use_reconditioning());
@@ -207,7 +227,7 @@ class TestSearchableConfiguration {
     }
 
     void test_configuration_at() {
-        Configuration<A> ca;
+        Configuration<Top> ca;
         HELPER_TEST_EQUALS(ca.level(),LevelOptions::LOW);
         ca.set_level(LevelOptions::MEDIUM);
         HELPER_TEST_EQUALS(ca.level(),LevelOptions::MEDIUM);
@@ -227,7 +247,7 @@ class TestSearchableConfiguration {
     }
 
     void test_configuration_search_space() {
-        Configuration<A> a;
+        Configuration<Top> a;
         HELPER_TEST_FAIL(a.search_space());
         a.set_both_use_reconditioning();
         auto search_space = a.search_space();
@@ -235,7 +255,7 @@ class TestSearchableConfiguration {
     }
 
     void test_configuration_make_singleton() {
-        Configuration<A> a;
+        Configuration<Top> a;
         a.set_both_use_reconditioning();
         auto search_space = a.search_space();
         HELPER_TEST_PRINT(search_space);
@@ -280,7 +300,7 @@ class TestSearchableConfiguration {
     }
 
     void test_configuration_hierarchic_search_space() {
-        Configuration<A> ca;
+        Configuration<Top> ca;
         Configuration<TestConfigurable> ctc;
         ctc.set_both_use_reconditioning();
         TestConfigurable tc(ctc);
@@ -293,7 +313,7 @@ class TestSearchableConfiguration {
     }
 
     void test_configuration_hierarchic_make_singleton() {
-        Configuration<A> ca;
+        Configuration<Top> ca;
         Configuration<TestConfigurable> ctc;
         ctc.set_test_interface({shared_ptr<TestInterface>(new ATest()),shared_ptr<TestInterface>(new BTest())});
         ctc.set_test_handle({ATest(),BTest()});
