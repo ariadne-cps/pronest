@@ -64,8 +64,6 @@ template<class C> struct Configuration;
 template<class C> class Configurable : public ConfigurableInterface {
     friend struct Configuration<C>;
   public:
-    //! \brief Copy constructor prohibited since it will not copy the configuration
-    Configurable(Configurable<C> const& other) = delete;
     //! \brief Mandated construction
     Configurable(Configuration<C> const& config);
     Configuration<C> const& configuration() const;
