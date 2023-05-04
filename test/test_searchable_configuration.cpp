@@ -248,10 +248,12 @@ class TestSearchableConfiguration {
 
     void test_configuration_search_space() {
         Configuration<Top> a;
-        HELPER_TEST_FAIL(a.search_space());
+        HELPER_TEST_EQUALS(a.search_space().dimension(),0);
+        HELPER_TEST_EQUALS(a.search_space().total_points(),1);
         a.set_both_use_reconditioning();
         auto search_space = a.search_space();
         HELPER_TEST_EQUALS(search_space.dimension(),1);
+        HELPER_TEST_EQUALS(search_space.total_points(),2);
     }
 
     void test_configuration_make_singleton() {

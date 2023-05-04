@@ -35,7 +35,7 @@ namespace ProNest {
 using Helper::Pair;
 
 ConfigurationSearchSpace::ConfigurationSearchSpace(Set<ConfigurationSearchParameter> const& parameters) {
-    HELPER_PRECONDITION(not parameters.empty());
+    //HELPER_PRECONDITION(not parameters.empty());
     for (auto const& p : parameters)
         _parameters.push_back(p);
 }
@@ -93,8 +93,11 @@ ConfigurationSearchSpace* ConfigurationSearchSpace::clone() const {
 
 ostream& operator<<(ostream& os, ConfigurationSearchSpace const& space) {
     os << "[";
-    for (size_t i=0; i<space._parameters.size()-1; ++i) os << space._parameters[i] << ",";
-    os << space._parameters[space._parameters.size()-1] << "]";
+    if (space._parameters.size()>0) {
+        for (size_t i = 0; i < space._parameters.size() - 1; ++i) os << space._parameters[i] << ",";
+        os << space._parameters[space._parameters.size() - 1];
+    }
+    os << "]";
     return os;
 }
 

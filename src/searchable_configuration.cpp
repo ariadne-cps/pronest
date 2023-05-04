@@ -87,7 +87,7 @@ ConfigurationSearchSpace SearchableConfiguration::search_space() const {
             }
         }
     }
-    HELPER_ASSERT_MSG(not result.empty(),"The search space is empty.");
+    //HELPER_ASSERT_MSG(not result.empty(),"The search space is empty.");
     return result;
 }
 
